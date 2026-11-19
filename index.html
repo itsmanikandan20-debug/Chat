@@ -792,6 +792,7 @@ i.nv::after{background:#C0392B}
     }
     if(done[key]&&secEl[key]){goTo(key);return;}
     busy=true;send.disabled=true;
+    noteLocal(text,key);
     var u=startTurn(text);
     if(key!=='other'){secEl[key]=u;}
     setActive(key);
@@ -1098,6 +1099,14 @@ i.nv::after{background:#C0392B}
 
   /* ---------- Gemini chat about Manikandan (via /api/chat on Vercel) ---------- */
   var aiHist=[];
+  // turns answered by the page itself (not the AI) still go into the AI's memory, so follow-ups like "explain" work
+  var LOCAL_SUM={
+    work:'I showed his 10 case study projects with links: Arattai, Instagram repost concept, Mini AI design assistant, Design Reviewer (n8n Figma plugin), OvalEdge blog page redesign, Swipe, XM 360, Lifeline, Desktop Drawer, Color Remains.',
+    status:'I told who Manikandan is and his current status: UI/UX and Graphic Designer at Revv Growth, 2.5 years, open to new opportunities.',
+    search:'I said Manikandan is my top pick for best designer in 2030 and showed his profile card.',
+    resume:'I shared his resume PDF.'
+  };
+  function noteLocal(text,key){ if(!LOCAL_SUM[key])return; aiHist.push({role:'user',text:text}); aiHist.push({role:'model',text:LOCAL_SUM[key]}); }
   function esc(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function fmt(x){
     return esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
@@ -1223,8 +1232,8 @@ i.nv::after{background:#C0392B}
     }
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
     if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
-    if(/(resume|résumé|\bcv\b|curriculum vitae|biodata|bio-data)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); var ra=el('div','a'); thread.appendChild(ra); R.resume(ra).then(function(){busy=false;send.disabled=false;}); return; }
-    if(/\b(links?|url|urls)\b/.test(low) && !/(linkedin|phone|number|mobile|email|mail|contact|resume|\bcv\b|whatsapp|github)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are the links, one for each case study. Tap VIEW to open.').then(function(){busy=false;send.disabled=false;}); return; }
+    if(/(resume|résumé|\bcv\b|curriculum vitae|biodata|bio-data)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); noteLocal(t,'resume'); var ra=el('div','a'); thread.appendChild(ra); R.resume(ra).then(function(){busy=false;send.disabled=false;}); return; }
+    if(/\b(links?|url|urls)\b/.test(low) && !/(linkedin|phone|number|mobile|email|mail|contact|resume|\bcv\b|whatsapp|github)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); noteLocal(t,'work'); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are the links, one for each case study. Tap VIEW to open.').then(function(){busy=false;send.disabled=false;}); return; }
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');
     food(t);
   });
