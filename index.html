@@ -1205,7 +1205,9 @@ i.nv::after{background:#C0392B}
     if(!unlocked){ask(t,null);return;}
     var low=t.toLowerCase();
     // the AI just asked "Do you need tea?" and the visitor said yes
-    if(teaAsked && /^(yes|yeah|yea|ya|yep|sure|ok|okay|ofc|of course|please|yes please|why not|need|i need)\b/.test(low)){ teaAsked=false; return food('I need tea'); }
+    // only a short, clear "yes" to the tea question orders tea (shows what they typed)
+    var clearYes=/^(yes|yeah|yea|ya|yep|yup|sure|ok|okay|ofc|of course|please|why not|yes please|ok sure|sure why not|i need|need|i want)[\s!.🙂☕]*$/.test(low) || /^(yes|ok|okay|sure|ya|yeah)\b.{0,12}\btea\b/.test(low);
+    if(teaAsked && clearYes){ teaAsked=false; return food(t, findItem('tea')); }
     var wasTea=teaAsked; teaAsked=false;
     // saying NO to food/tea must never place an order
     if(/\b(no|not|dont|don't|do not|nope|nah|never|no need|cancel|stop|skip|later)\b/.test(low) && (wasTea || findItem(t) || /(tea|coffee|food|order|eat|drink|hungry)/.test(low))){
