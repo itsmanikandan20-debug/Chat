@@ -108,5 +108,30 @@
     "id": "shock-3",
     "mood": "shock",
     "file": "/memes/shock-3.jpg"
+  },
+  {
+    "id": "thinking-1",
+    "mood": "thinking",
+    "file": "/memes/thinking-1.jpg"
+  },
+  {
+    "id": "thinking-2",
+    "mood": "thinking",
+    "file": "/memes/thinking-2.jpg"
+  },
+  {
+    "id": "thinking-3",
+    "mood": "thinking",
+    "file": "/memes/thinking-3.jpg"
+  },
+  {
+    "id": "thinking-4",
+    "mood": "thinking",
+    "file": "/memes/thinking-4.jpg"
+  },
+  {
+    "id": "thinking-5",
+    "mood": "thinking",
+    "file": "/memes/thinking-5.jpg"
   }
 ]
