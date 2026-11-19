@@ -665,7 +665,7 @@ i.nv::after{background:#C0392B}
         '<div class="pname">Manikandan <span class="pill ok">Open to work</span></div>'+
         '<div class="phead">UI/UX Designer · Graphic Designer · AI workflows</div>'+
         '<div class="ploc">RevvGrowth · Chennai, Tamil Nadu, India</div>'+
-        '<div class="pmeta"><span class="badge">Websites</span><span class="badge">Mobile case studies</span><span class="badge">Figma plugins with n8n</span></div>'+
+        '<div class="pmeta"><span class="badge">Websites</span><span class="badge">UX case studies</span><span class="badge">Figma plugins with n8n</span></div>'+
         '<div class="pbtns"><a class="pbtn fill" href="'+LINKS.linkedin+'">View profile</a><a class="pbtn" href="'+LINKS.portfolio+'">Portfolio</a></div>'+
         '</div></div><div class="hand" aria-hidden="true"><svg viewBox="0 0 92 46"><rect x="0" y="9" width="46" height="28" rx="3" fill="#2B4C9B"/><path d="M8 9 v28 M18 9 v28" stroke="#3A5DB0" stroke-width="1.2"/><rect x="42" y="7" width="8" height="32" rx="2" fill="#F4F2EC" stroke="#C9C4B6" stroke-width="1"/><path d="M50 12 C58 10 66 10 72 12 C80 10 86 13 86 17 C86 20 82 21 78 21 C84 22 87 25 86 28 C85 31 81 31 77 30.5 C82 32 84 35 82 37.5 C80 40 75 39.5 71 38.5 C66 39.5 58 38 50 35 Z" fill="#F2C29B" stroke="#8A5A3A" stroke-width="1.7" stroke-linejoin="round"/><path d="M71 12.5 C74 15 74 18 72 20 M77 21 C79 23 79 26 77 28 M73 30.5 C75 32.5 75 35 73 37" stroke="#8A5A3A" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M56 12 C60 7 66 6 69 8.5 C71 10.5 68 12.5 64 13" fill="#F2C29B" stroke="#8A5A3A" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>');})
       .then(function(){
@@ -682,7 +682,7 @@ i.nv::after{background:#C0392B}
       return tool(a,'P','Read profile','manikandan')
       .then(function(){return typeP(a,'<b>Manikandan</b> is a <b>UI/UX Designer and Graphic Designer</b> at RevvGrowth, a B2B SaaS marketing agency in Chennai, with about 2.5 years of experience.');})
       .then(function(){return typeP(a,'He designs websites for internal and client projects, along with blog banners, infographics, presentations, posters and other marketing creatives.');})
-      .then(function(){return typeP(a,'He hasn’t worked on a live mobile app yet, so he builds mobile app case studies to grow his product design skills. He’s also into AI: he has built Figma plugins using n8n and explored many AI tools.');})
+      .then(function(){return typeP(a,'He also creates UX case studies and builds AI design tools, like a Figma plugin where three AI models review designs.');})
       .then(function(){return typeP(a,'Right now he is <b>open to new opportunities</b>. He wants to join a bigger team, learn from senior designers and grow as a designer.');});
     },
     work:function(a){
@@ -705,27 +705,24 @@ i.nv::after{background:#C0392B}
       }
       function card(title,rate,meta,off,items,more){
         return '<div class="wcard"><div class="wt"><h3>'+title+'</h3><span class="rate">'+rate+'</span></div>'+
-          '<div class="wmeta"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 3h4"/></svg>'+meta+'</div>'+
-          '<div class="woff"><b>✓</b>'+off+'</div>'+items+
+          (meta?'<div class="wmeta"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 3h4"/></svg>'+meta+'</div>':'')+
+          (off?'<div class="woff"><b>✓</b>'+off+'</div>':'')+items+
           '<a class="vmore" href="'+more+'">View more</a></div>';
       }
       var html='<div class="ww"><div class="wwh"><span class="src"><i>P</i>Portfolio</span><span class="ics" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 3.5L16 11H5"/></svg></span></div><div class="wrow">'+
-        card('Mobile app case studies','4 projects','UX · Product design','Built to grow product design skills',
-          item(0,'phone','#F3B48A','#C2603F','Arattai · Messaging app UX','Feature improvements for Zoho’s app',B)+
-          item(0,'phone','#B9D3F5','#2F5FC8','Swipe · Fintech app','Brand book and app UI design',B)+
-          item(0,'phone','#BFE3CF','#1E7F4F','XM 360 · Trading app','Mobile trading app redesign',B),B)+
-        card('Websites','Live work','Internal + client projects','Designed for domestic and international clients',
-          item(0,'web','#F6D7C6','#C2603F','Company website revamp','Full redesign of his agency’s site',P)+
-          item(0,'web','#D6E2F7','#3B5BA8','Client website redesigns','B2B SaaS marketing sites',P)+
-          item(0,'web','#E3DAF3','#6A4FB0','Revv Talent website','Recruitment sub-brand site',P),P)+
-        card('Graphic design','Daily work','Marketing creatives','Banners, infographics and more',
-          item(0,'poster','#F7E2B8','#B98A1D','Blog banners','For B2B SaaS client blogs',P)+
-          item(0,'chart','#D9EEF2','#277C8C','Infographics','Complex ideas made simple',P)+
-          item(0,'slides','#F3D6DE','#B04A6A','Presentations & posters','Decks, posters and proposals',P),P)+
-        card('AI work','Hands-on','Workflows · Agents · Tools','Built and tested himself',
-          item(0,'plug','#E1E6F9','#4357C9','Figma plugins with n8n','Automating design tasks with AI',P)+
-          item(0,'bolt','#F9E0D3','#D2552E','HackerRank Orchestrate','24-hour AI hackathon entry',P)+
-          item(0,'chart','#DDF1E5','#21865A','UI-Finder','Find similar website designs','https://github.com/itsmanikandan20-debug/UI-Finder'),P)+
+        card('UX case studies','3 projects','','',
+          item(0,'phone','#F6C9C6','#C62828','Lifeline · Blood donation app','Research, personas, full app design',B)+
+          item(0,'phone','#B9D3F5','#2F5FC8','Swipe · Finance app','Brand book, Verify &amp; Pay safety flow',B)+
+          item(0,'phone','#BFE3CF','#1E7F4F','XM 360 · Trading app','Redesign of key screens',B),B)+
+        card('Feature concepts','3 projects','','',
+          item(0,'phone','#F3B48A','#C2603F','Arattai · Messaging app','8 new features for Zoho’s app',B)+
+          item(0,'phone','#F3D6DE','#B04A6A','Instagram · Confirm repost','Stop accidental reposts',B)+
+          item(0,'web','#D6E2F7','#3B5BA8','Blog page redesign','Easier long-form reading',B),B)+
+        card('AI tools &amp; experiments','4 projects','','',
+          item(0,'plug','#E1E6F9','#4357C9','Design Reviewer','Figma plugin, 3 AI models review',B)+
+          item(0,'bolt','#F9E0D3','#D2552E','Mini AI design assistant','Finds UI/UX issues, suggests fixes',B)+
+          item(0,'poster','#F7E2B8','#B98A1D','Color Remains','A colour diary for designers','https://color-remains.vercel.app/')+
+          item(0,'slides','#DDF1E5','#21865A','My Desktop Drawer','A fun desktop experiment','https://www.behance.net/gallery/258358513/My-Desktop-Drawer-A-Fun-Desktop-Experiment'),B)+
         '</div></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
       .then(function(){return typeP(a,'Here’s his work. Swipe across to see everything.');})
