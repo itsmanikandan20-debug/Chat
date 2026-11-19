@@ -129,8 +129,9 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Not allowed' });
   }
 
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return res.status(500).json({ error: 'GEMINI_API_KEY is not set' });
+  // main key + optional backup key from another Google account
+  const KEYS = [process.env.GEMINI_API_KEY, process.env.GEMINI_API_KEY_2].filter(Boolean);
+  if (!KEYS.length) return res.status(500).json({ error: 'GEMINI_API_KEY is not set' });
 
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
@@ -150,7 +151,7 @@ module.exports = async function handler(req, res) {
       .filter((m, i, arr) => m && arr.indexOf(m) === i);
     const reqInit = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: PROFILE }] },
           contents,
@@ -169,22 +170,29 @@ module.exports = async function handler(req, res) {
         })
       };
     let r = null;
+    const started = Date.now();
+    // try each model with the main key, then the backup key; stop after ~25s total
+    outer:
     for (const m of MODELS) {
-      // each model gets max 12 seconds, so visitors never wait forever
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 12000);
-      try {
-        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, { ...reqInit, signal: ctrl.signal });
-      } catch (e) {
+      for (let k = 0; k < KEYS.length; k++) {
+        if (Date.now() - started > 25000) break outer;
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 10000);
+        try {
+          r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`,
+            { ...reqInit, headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
+        } catch (e) {
+          clearTimeout(timer);
+          console.error('Gemini timed out, trying next:', m, 'key', k + 1);
+          r = null;
+          continue;
+        }
         clearTimeout(timer);
-        console.error('Gemini model timed out, trying next:', m);
-        r = null;
-        continue;
+        if (r.ok) break outer;
+        if (![429, 500, 503, 404, 403].includes(r.status)) break outer;
+        console.error('Gemini busy/unavailable, trying next:', m, 'key', k + 1, r.status);
+        if (r.status === 404) break; // model missing: same for every key, go to next model
       }
-      clearTimeout(timer);
-      if (r.ok) break;
-      if (![429, 500, 503, 404].includes(r.status)) break;
-      console.error('Gemini model busy/unavailable, trying next:', m, r.status);
     }
     if (!r) return res.status(504).json({ error: 'AI timed out' });
     const data = await r.json();
