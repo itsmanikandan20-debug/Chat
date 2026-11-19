@@ -259,7 +259,6 @@ svg.i{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-
 .tab .d{width:7px;height:7px;border-radius:50%;background:var(--rule)}
 .tab.done .d{background:var(--ok)}
 .tab:disabled{cursor:default}
-@media (max-width:860px){.top .title{display:none}.top{justify-content:center}.top .right{position:absolute;right:14px}.top{position:relative}}
 @media (max-width:560px){.top .right{display:none}.tab{padding:6px 9px;font-size:13.5px}.tab .d{display:none}}
 
 
@@ -322,8 +321,6 @@ body.off .plain{display:flex}
 .side .stab:hover{background:var(--soft)}
 .side .stab.on{background:#ECEAE4;box-shadow:none;font-weight:600}
 .side .stab .d{width:8px;height:8px;margin:0 5px}
-.top .tabs2{display:none}
-@media (max-width:860px){.top .tabs2{display:flex}}
 
 
 /* Unlock pill */
@@ -431,6 +428,19 @@ i.nv::after{background:#C0392B}
 .ditem.empty{animation:plate .4s cubic-bezier(.3,1.5,.5,1)}
 @keyframes plate{from{transform:scale(.5)}to{transform:scale(1)}}
 
+
+/* Welcome: new or returning visitor */
+.welcome{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(26,25,21,.35);backdrop-filter:blur(6px)}
+.welcome[hidden]{display:none}
+.wbox{width:100%;max-width:420px;background:#fff;border-radius:20px;padding:28px 24px 22px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.35);animation:fade .35s ease both}
+.wav{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(140deg,#D97757,#8C3B26);color:#fff;display:grid;place-items:center;font-family:var(--font-read);font-weight:600;font-size:22px}
+.wbox h2{margin:0;font-family:var(--font-read);font-weight:600;font-size:24px;letter-spacing:-0.01em}
+.wbox p{color:var(--muted);margin:10px 0 20px;font-size:15px}
+.wbtns{display:flex;flex-direction:column;gap:10px}
+.wb{padding:12px;border-radius:12px;border:1px solid var(--rule);background:#fff;font-weight:600;font-size:15.5px}
+.wb.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.wb:hover{border-color:var(--ink)}
+
 @media (max-width:860px){.app{grid-template-columns:1fr}.side{display:none}}
 @media (max-width:560px){
   .thread{padding:16px 14px 24px;gap:18px}
@@ -447,6 +457,7 @@ i.nv::after{background:#C0392B}
 </head>
 <body>
 <div class="modesw"><span id="swlab">Chat on</span><button class="sw" id="sw" type="button" role="switch" aria-checked="true" aria-label="Turn chat on or off"></button></div><div class="plain" id="plain"><div class="pl"><h1>Manikandan</h1><p>UI/UX Designer and Graphic Designer · Tamil Nadu, India</p><a class="row" href="https://mani20021.github.io/Portfolio/">Portfolio <span>mani20021.github.io →</span></a><a class="row" href="https://www.behance.net/manikandan276">Behance <span>Case studies →</span></a><a class="row" id="resumeLink" href="https://mani20021.github.io/Portfolio/">Resume <span>View or download →</span></a></div></div>
+<div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle"><div class="wbox"><div class="wav" aria-hidden="true">MK</div><h2 id="wTitle">Have you been here before?</h2><p>New visitors start with two quick questions. If you’ve already seen them, jump straight to asking anything about Manikandan.</p><div class="wbtns"><button type="button" class="wb primary" id="wNew">I’m new here</button><button type="button" class="wb" id="wBack">I’ve visited before</button></div></div></div>
 <div class="app">
   <aside class="side" aria-label="Navigation">
     <div class="side-in">
@@ -477,7 +488,7 @@ i.nv::after{background:#C0392B}
   <main class="main">
     <div class="top">
       <div class="title" id="topTitle">New chat <svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M6 9l6 6 6-6"/></svg></div>
-      <nav class="tabs2" aria-label="Sections"><button class="tab" type="button" data-k="search"><span class="d"></span>Top pick</button><button class="tab" type="button" data-k="status"><span class="d"></span>Current status</button><button class="tab" type="button" data-k="work"><span class="d"></span>His work</button></nav>
+      
       <div class="right">
         <button class="share" id="restart" type="button" title="Start over"><svg class="i" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>Start over</button>
         <span class="icon-dead dead"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></span>
@@ -512,7 +523,7 @@ i.nv::after{background:#C0392B}
 
 <script>
 (function(){
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce0 = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches, reduce = reduce0;
   var thread=document.getElementById('thread'), scroll=document.getElementById('scroll');
   var form=document.getElementById('form'), input=document.getElementById('q'), send=document.getElementById('send');
   var hello=document.getElementById('hello');
@@ -1028,6 +1039,31 @@ i.nv::after{background:#C0392B}
     document.body.classList.toggle('off',!on);
     window.scrollTo(0,0);
   });
+
+  // Welcome: new visitors go step by step; returning visitors get the two answers instantly and can ask anything
+  var welcome=document.getElementById('welcome');
+  function closeWelcome(){welcome.hidden=true;input.focus({preventScroll:true});}
+  document.getElementById('wNew').addEventListener('click',function(){closeWelcome();});
+  document.getElementById('wBack').addEventListener('click',function(){
+    closeWelcome();
+    if(busy) return;
+    busy=true; send.disabled=true; reduce=true;
+    var chain=Promise.resolve();
+    ['search','status'].forEach(function(k){
+      chain=chain.then(function(){
+        if(done[k]) return;
+        var u=startTurn(Q[k]); secEl[k]=u;
+        var a=el('div','a'); thread.appendChild(a);
+        return R[k](a).then(function(){done[k]=true;});
+      });
+    });
+    chain.then(function(){
+      reduce=reduce0; busy=false; send.disabled=false;
+      setActive(null); refreshComposer(); down();
+      input.focus({preventScroll:true});
+    });
+  });
+  setTimeout(function(){document.getElementById('wNew').focus();},50);
   document.getElementById('restart').addEventListener('click',reset);
   document.getElementById('newchat').addEventListener('click',reset);
 })();
