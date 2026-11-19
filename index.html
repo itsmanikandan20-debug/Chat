@@ -1176,6 +1176,11 @@ i.nv::after{background:#C0392B}
       food(b.dataset.c==='food'?'Show me the menu':'Show groceries');
     });});
   })();
+  // every outside link (Behance, portfolio, GitHub, prototype...) opens in a new tab
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href^="http"]');
+    if(a&&a.host!==location.host){a.target='_blank';a.rel='noopener noreferrer';}
+  },true);
   input.addEventListener('input',function(){send.classList.toggle('go',!!input.value.trim()||!!nextKey());});
   form.addEventListener('submit',function(e){
     e.preventDefault();
