@@ -193,5 +193,15 @@
     "id": "info-6",
     "mood": "info-more",
     "file": "/memes/info-6.jpg"
+  },
+  {
+    "id": "sorry-1",
+    "mood": "sorry",
+    "file": "/memes/sorry-1.jpg"
+  },
+  {
+    "id": "sorry-2",
+    "mood": "sorry",
+    "file": "/memes/sorry-2.jpg"
   }
 ]
