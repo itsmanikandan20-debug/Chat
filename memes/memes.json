@@ -133,5 +133,15 @@
     "id": "thinking-5",
     "mood": "thinking",
     "file": "/memes/thinking-5.jpg"
+  },
+  {
+    "id": "sad-6",
+    "mood": "sad",
+    "file": "/memes/sad-6.jpg"
+  },
+  {
+    "id": "sad-7",
+    "mood": "sad",
+    "file": "/memes/sad-7.jpg"
   }
 ]
