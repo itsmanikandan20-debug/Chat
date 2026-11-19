@@ -146,7 +146,7 @@ module.exports = async function handler(req, res) {
 
   try {
     // Try the main model, then backups, if Google is busy (503), rate-limited (429) or the model is missing (404)
-    const MODELS = [MODEL, ...(process.env.GEMINI_BACKUP_MODELS || 'gemini-3.5-flash,gemini-2.5-flash-lite,gemini-2.5-flash').split(',').map(x => x.trim())]
+    const MODELS = [MODEL, ...(process.env.GEMINI_BACKUP_MODELS || 'gemini-3.8-flash,gemini-3.8-flash-lite,gemini-3.5-flash').split(',').map(x => x.trim())]
       .filter((m, i, arr) => m && arr.indexOf(m) === i);
     const reqInit = {
         method: 'POST',
@@ -170,11 +170,23 @@ module.exports = async function handler(req, res) {
       };
     let r = null;
     for (const m of MODELS) {
-      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, reqInit);
+      // each model gets max 12 seconds, so visitors never wait forever
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 12000);
+      try {
+        r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, { ...reqInit, signal: ctrl.signal });
+      } catch (e) {
+        clearTimeout(timer);
+        console.error('Gemini model timed out, trying next:', m);
+        r = null;
+        continue;
+      }
+      clearTimeout(timer);
       if (r.ok) break;
       if (![429, 500, 503, 404].includes(r.status)) break;
       console.error('Gemini model busy/unavailable, trying next:', m, r.status);
     }
+    if (!r) return res.status(504).json({ error: 'AI timed out' });
     const data = await r.json();
     if (!r.ok) {
       console.error('Gemini error', r.status, JSON.stringify(data).slice(0, 500));

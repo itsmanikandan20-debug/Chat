@@ -249,7 +249,7 @@ svg.i{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-
 .vbtn:hover{background:#FCE9E6}
 .wlist{padding:4px 16px 8px;display:flex;flex-direction:column}
 .wit.nothumb{grid-template-columns:1fr auto;margin-top:0;padding:12px 0;border-bottom:1px solid var(--rule)}
-.wlist .vmore{margin-top:6px}
+.wtwo{padding:12px 0 4px}.wtwo .wrow{padding-bottom:6px}.wtwo .wcard{flex:0 0 88%;max-width:400px;padding:4px 16px}.wtwo .wcard .wit:last-child{border-bottom:0}.wtwo>.vmore{display:block;margin:4px 0 6px}
 .vmore{margin-top:12px;text-align:center;color:#D4504A;font-weight:500;font-size:16px;text-decoration:none;padding:6px}
 @media (max-width:560px){.wcard{flex-basis:84%}.wit{grid-template-columns:54px 1fr auto;gap:10px}.thumb,.thumb svg{width:54px;height:54px}.vbtn{padding:7px 14px}}
 
@@ -709,18 +709,20 @@ i.nv::after{background:#C0392B}
           (off?'<div class="woff"><b>✓</b>'+off+'</div>':'')+items+
           '<a class="vmore" href="'+more+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       }
-      var html='<div class="ww wlist">'+
+      var html='<div class="ww wtwo"><div class="wrow">'+
+        '<div class="wcard wlist">'+
         '<div class="wit nothumb"><div><div class="nm">Lifeline · Blood donation app</div><div class="ds">Research, personas, full app design</div></div><a class="vbtn" href="https://www.behance.net/gallery/192399823/Blood-Donation-App-UIUX-Case-Study" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Swipe · Finance app</div><div class="ds">Brand book, Verify &amp; Pay safety flow</div></div><a class="vbtn" href="https://www.behance.net/gallery/255033349/Swipe-Brand-Book-Designs-Finance-Management-App" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">XM 360 · Trading app</div><div class="ds">Redesign of key screens</div></div><a class="vbtn" href="https://www.behance.net/gallery/253178551/XM-360-Trading-App-Redesign" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Arattai · Messaging app</div><div class="ds">8 new features for Zoho’s app</div></div><a class="vbtn" href="https://www.behance.net/gallery/244043635/Arattai-App" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Instagram · Confirm repost</div><div class="ds">Stop accidental reposts</div></div><a class="vbtn" href="https://www.behance.net/gallery/252150973/Instagram-Feature-Improvement-Confirm-Before-Reposting" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '</div><div class="wcard wlist">'+
         '<div class="wit nothumb"><div><div class="nm">Blog page redesign</div><div class="ds">Easier long-form reading</div></div><a class="vbtn" href="https://www.behance.net/gallery/252222975/Blog-Page-Redesign-UXUI-Case-Study" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Design Reviewer</div><div class="ds">Figma plugin, 3 AI models review</div></div><a class="vbtn" href="https://www.behance.net/gallery/255906623/AI-Design-Reviewer-Figma-Plugin-n8n" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Mini AI design assistant</div><div class="ds">Finds UI/UX issues, suggests fixes</div></div><a class="vbtn" href="https://www.behance.net/gallery/256506207/Mini-AI-Design-Assistant" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">Color Remains</div><div class="ds">A colour diary for designers</div></div><a class="vbtn" href="https://color-remains.vercel.app/" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
         '<div class="wit nothumb"><div><div class="nm">My Desktop Drawer</div><div class="ds">A fun desktop experiment</div></div><a class="vbtn" href="https://www.behance.net/gallery/258358513/My-Desktop-Drawer-A-Fun-Desktop-Experiment" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
-        '<a class="vmore" href="'+B+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
+        '</div></div><a class="vmore" href="'+B+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
       .then(function(){return typeP(a,intro||'Here’s his work. Swipe across to see everything.');})
       .then(function(){return block(a,html);});
@@ -737,7 +739,7 @@ i.nv::after{background:#C0392B}
   function refreshComposer(){
     var n=nextKey();
     if(!n && !unlocked) unlock();
-    input.placeholder=n?Q[n]:'Ask me anything about Manikandan, or say “I need tea”';
+    input.placeholder=n?Q[n]:'Ask me anything about Manikandan, or order food';
     send.classList.toggle('go',!!n||!!input.value.trim());
   }
   function unlock(){
@@ -1135,8 +1137,9 @@ i.nv::after{background:#C0392B}
     var steps=liveRow(a,funWords(text));
     aiHist.push({role:'user',text:text});
     var hist=aiHist.slice(-10);
-    return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone})})
-      .then(function(r){return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
+    var ac=new AbortController(); var tmo=setTimeout(function(){ac.abort();},30000);
+    return fetch('/api/chat',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone})})
+      .then(function(r){clearTimeout(tmo);return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
       .then(function(res){
         var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info'&&!teaDone); if(res.mood==='info') teaDone=true;
         return steps.stop('Found it ✨').then(function(){
@@ -1153,7 +1156,8 @@ i.nv::after{background:#C0392B}
       })
       .catch(function(){
         aiHist.pop();
-        return steps.stop('Couldn’t reach the AI 😿').then(function(){return typeP(a,'I can’t reach the AI right now. You can still see his work on his <a href="'+LINKS.portfolio+'">portfolio</a> and <a href="'+LINKS.behance+'">Behance</a>, or try ordering: “I need tea”.');});
+        clearTimeout(tmo);
+        return steps.stop('The AI is busy right now 😿').then(function(){return typeP(a,'Google’s AI is very busy right now, please try again in a minute. Meanwhile, see his work on <a href="'+LINKS.behance+'" target="_blank" rel="noopener noreferrer">Behance</a>, or order some food 🍛');});
       })
       .then(function(){},function(){});
   }
