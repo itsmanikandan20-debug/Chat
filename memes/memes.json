@@ -63,5 +63,25 @@
     "id": "sad-5",
     "mood": "sad",
     "file": "/memes/sad-5.jpg"
+  },
+  {
+    "id": "happy-1",
+    "mood": "happy",
+    "file": "/memes/happy-1.jpg"
+  },
+  {
+    "id": "happy-2",
+    "mood": "happy",
+    "file": "/memes/happy-2.jpg"
+  },
+  {
+    "id": "hire-1",
+    "mood": "hire",
+    "file": "/memes/hire-1.jpg"
+  },
+  {
+    "id": "hire-2",
+    "mood": "hire",
+    "file": "/memes/hire-2.jpg"
   }
 ]
