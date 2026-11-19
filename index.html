@@ -486,6 +486,7 @@ i.nv::after{background:#C0392B}
 .cont{display:flex;flex-direction:column;line-height:1.2;flex:1;min-width:0}
 .cont b{font-size:14px;font-weight:600}.cont small{font-size:12px;color:var(--muted)}
 .conok{font-size:11.5px;color:#1E6B45;white-space:nowrap}
+.condemo{font-size:11px;color:var(--muted);padding:4px 8px 2px;border-top:1px solid var(--rule);margin-top:4px}
 .connote{font-size:12.5px;color:var(--muted);padding:6px 8px}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
 .rcopy:hover{color:var(--ink)}
@@ -564,9 +565,10 @@ i.nv::after{background:#C0392B}
           <div class="l conwrap"><button type="button" class="plusb" id="plusb" aria-label="Connectors" aria-haspopup="true" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
             <div class="conpop" id="conpop" role="menu" hidden>
               <div class="conh">Connectors</div>
-              <button type="button" class="conrow" role="menuitem" data-c="food"><span class="conic" style="background:#FDE7DC">🍽️</span><span class="cont"><b>Tiffin</b><small>Food delivery</small></span><span class="conok">● Connected</span></button>
-              <button type="button" class="conrow" role="menuitem" data-c="grocery"><span class="conic" style="background:#E3F4E8">🧺</span><span class="cont"><b>Kirana</b><small>Groceries in 10 min</small></span><span class="conok">● Connected</span></button>
+              <button type="button" class="conrow" role="menuitem" data-c="food"><span class="conic" style="background:#FDE7DC">🍽️</span><span class="cont"><b>Zomato</b><small>Food delivery</small></span><span class="conok">● Connected</span></button>
+              <button type="button" class="conrow" role="menuitem" data-c="grocery"><span class="conic" style="background:#E3F4E8">🧺</span><span class="cont"><b>Blinkit</b><small>Groceries in 10 min</small></span><span class="conok">● Connected</span></button>
               <div class="conrow static"><span class="conic" style="background:#E8EEFC">✦</span><span class="cont"><b>Gemini</b><small>Answers about Mani</small></span><span class="conok">● Connected</span></div>
+              <div class="condemo">Demo only · not affiliated with Zomato or Blinkit</div>
               <div class="connote" id="connote" hidden>Answer the 2 questions first to unlock 🙂</div>
             </div></div>
           <span class="mid">A concept by Manikandan. AI answers by Gemini.</span>
@@ -800,36 +802,36 @@ i.nv::after{background:#C0392B}
     grill:{n:'Coal & Grill',r:4.6,km:1.8,m:28,x:'Charcoal grilled, juicy inside'},
     sea:{n:'Coastal Catch',r:4.5,km:2.1,m:30,x:'Fresh catch of the day'},
     sweet:{n:'Sugar Rush Bakery',r:4.7,km:0.8,m:15,x:'Baked this morning'},
-    kirana:{n:'Kirana Express',r:4.6,km:0.6,m:10,x:'Farm fresh, picked this morning'}
+    kirana:{n:'Blinkit Express',r:4.6,km:0.6,m:10,x:'Farm fresh, picked this morning'}
   };
   // [emoji, name, price, shop, extra keywords]
   var MENU=[
-    {id:'veg',t:'Veg',src:'Tiffin',dot:'veg',items:[
+    {id:'veg',t:'Veg',src:'Zomato',dot:'veg',items:[
       ['🍕','Pizza',149,'pizza',''],['🍔','Veg Burger',99,'burger','burger'],['🍟','French Fries',79,'burger','fries'],
       ['🥪','Sandwich',89,'cafe',''],['🌮','Taco',119,'burger',''],['🍝','Pasta',159,'pizza',''],
       ['🍜','Veg Noodles',129,'asian','noodles hakka'],['🥟','Veg Momos',99,'asian','momo momos dumpling'],['🧆','Falafel',109,'grill',''],
       ['🥗','Salad',129,'cafe',''],['🫓','Paratha',59,'grill','parata parotha'],['🍚','Curd Rice',79,'biryani','rice'],['🍿','Popcorn',69,'cafe','']]},
-    {id:'nonveg',t:'Non-veg',src:'Tiffin',dot:'nonveg',items:[
+    {id:'nonveg',t:'Non-veg',src:'Zomato',dot:'nonveg',items:[
       ['🍛','Chicken Biryani',199,'biryani','biryani briyani biriyani'],['🍗','Chicken Fry',149,'grill','chicken'],['🍖','Mutton Chukka',249,'grill','mutton'],
       ['🍲','Chicken Curry',179,'biryani','curry'],['🍳','Omelette',49,'chai','egg omlet'],['🍤','Prawn Fry',229,'sea','prawn prawns shrimp'],
       ['🐟','Fish Fry',199,'sea','fish'],['🍣','Sushi',299,'asian',''],['🌭','Hot Dog',129,'burger','hotdog'],['🥩','Grilled Meat',279,'grill','steak meat kebab']]},
-    {id:'drinks',t:'Drinks',src:'Tiffin',dot:'veg',items:[
+    {id:'drinks',t:'Drinks',src:'Zomato',dot:'veg',items:[
       ['☕','Masala Tea',20,'chai','tea chai'],['☕','Filter Coffee',30,'chai','coffee'],['🍵','Green Tea',40,'chai',''],
       ['🧋','Bubble Tea',149,'cafe','boba'],['🥤','Cold Drink',45,'cafe','coke pepsi soda cooldrink'],['🧃','Fresh Juice',60,'cafe','juice']]},
-    {id:'sweet',t:'Desserts',src:'Tiffin',dot:'veg',items:[
+    {id:'sweet',t:'Desserts',src:'Zomato',dot:'veg',items:[
       ['🍰','Cake',89,'sweet',''],['🍩','Donut',79,'sweet','doughnut'],['🍦','Ice Cream',69,'sweet','icecream'],
       ['🍪','Cookies',49,'sweet','cookie biscuit'],['🧁','Cupcake',59,'sweet',''],['🍫','Chocolate',50,'sweet','choco']]},
-    {id:'veggies',t:'Vegetables',src:'Kirana',dot:'veg',items:[
+    {id:'veggies',t:'Vegetables',src:'Blinkit',dot:'veg',items:[
       ['🍅','Tomato',30,'kirana','tomatoes'],['🥕','Carrot',40,'kirana','carrots'],['🥔','Potato',35,'kirana','potatoes aloo'],
       ['🧅','Onion',40,'kirana','onions'],['🧄','Garlic',25,'kirana',''],['🌶️','Green Chilli',15,'kirana','chilli chili'],
       ['🫑','Capsicum',30,'kirana','bell pepper'],['🥒','Cucumber',25,'kirana',''],['🍆','Brinjal',35,'kirana','eggplant'],
       ['🥦','Broccoli',60,'kirana',''],['🌽','Corn',25,'kirana',''],['🥬','Spinach',20,'kirana','keerai palak'],['🍄','Mushroom',50,'kirana','mushrooms']]},
-    {id:'fruits',t:'Fruits',src:'Kirana',dot:'veg',items:[
+    {id:'fruits',t:'Fruits',src:'Blinkit',dot:'veg',items:[
       ['🍎','Apple',120,'kirana','apples'],['🍌','Banana',50,'kirana','bananas'],['🥭','Mango',150,'kirana','mangoes'],
       ['🍇','Grapes',90,'kirana',''],['🍉','Watermelon',60,'kirana',''],['🍊','Orange',80,'kirana','oranges'],
       ['🍍','Pineapple',70,'kirana',''],['🥥','Coconut',40,'kirana',''],['🍓','Strawberry',110,'kirana','strawberries'],
       ['🍋','Lemon',10,'kirana','lemons'],['🍐','Pear',100,'kirana',''],['🥝','Kiwi',90,'kirana','']]},
-    {id:'daily',t:'Daily needs',src:'Kirana',dot:'veg',items:[
+    {id:'daily',t:'Daily needs',src:'Blinkit',dot:'veg',items:[
       ['🥛','Milk',30,'kirana',''],['🍞','Bread',45,'kirana',''],['🥚','Eggs',72,'kirana',''],
       ['🧈','Butter',60,'kirana',''],['🧀','Cheese',99,'kirana',''],['🍯','Honey',199,'kirana','']]}
   ];
@@ -860,12 +862,12 @@ i.nv::after{background:#C0392B}
 
   function menuCard(first){
     var order=MENU.slice();
-    if(first==='grocery') order=MENU.filter(function(s){return s.src==='Kirana';}).concat(MENU.filter(function(s){return s.src!=='Kirana';}));
+    if(first==='grocery') order=MENU.filter(function(s){return s.src==='Blinkit';}).concat(MENU.filter(function(s){return s.src!=='Blinkit';}));
     var h='<div class="menu"><div class="mtabs">';
-    order.forEach(function(s,i){h+='<button type="button" class="mtab'+(i===0?' on':'')+'" data-s="'+s.id+'">'+(s.dot==='nonveg'?'<i class="nv"></i>':s.src==='Kirana'?'':'<i class="vg"></i>')+s.t+'</button>';});
+    order.forEach(function(s,i){h+='<button type="button" class="mtab'+(i===0?' on':'')+'" data-s="'+s.id+'">'+(s.dot==='nonveg'?'<i class="nv"></i>':s.src==='Blinkit'?'':'<i class="vg"></i>')+s.t+'</button>';});
     h+='</div>';
     order.forEach(function(s,i){
-      h+='<div class="msec" data-s="'+s.id+'"'+(i===0?'':' hidden')+'><div class="msrc">'+(s.src==='Kirana'?'🧺 Kirana · groceries in 10 min':'🍽️ Tiffin · food delivery')+'</div><div class="mgrid">';
+      h+='<div class="msec" data-s="'+s.id+'"'+(i===0?'':' hidden')+'><div class="msrc">'+(s.src==='Blinkit'?'🧺 Blinkit · groceries in 10 min':'🍽️ Zomato · food delivery')+'</div><div class="mgrid">';
       s.items.forEach(function(it){h+='<button type="button" class="mitem" data-n="'+it[1]+'"><span class="me">'+it[0]+'</span><span class="mn">'+it[1]+'</span><span class="mp">₹'+it[2]+'</span></button>';});
       h+='</div></div>';
     });
@@ -898,10 +900,10 @@ i.nv::after{background:#C0392B}
       p=wait(400).then(function(){return typeP(a,'Sorry, we don’t have '+name+' 🥺. Here’s our menu. Tap anything to order.');})
         .then(function(){return block(a,menuCard());}).then(function(){wireMenu(a);});
     } else if(/(grocer|vegetable|veggie|fruit|kirana|blinkit|milk|daily)/.test(t)){
-      p=tool(a,'K','Used Kirana','list_items').then(function(){return typeP(a,'Here’s what Kirana has today. Tap anything to order.');})
+      p=tool(a,'B','Used Blinkit','list_items').then(function(){return typeP(a,'Here’s what Blinkit has today. Tap anything to order.');})
         .then(function(){return block(a,menuCard('grocery'));}).then(function(){wireMenu(a);});
     } else if(/(menu|hungry|food|order something|zomato|swiggy|snack|eat something|something to eat|something to drink)/.test(t)){
-      p=tool(a,'T','Used Tiffin','list_menu').then(function(){return typeP(a,'Here’s our menu. Tap anything to order.');})
+      p=tool(a,'Z','Used Zomato','list_menu').then(function(){return typeP(a,'Here’s our menu. Tap anything to order.');})
         .then(function(){return block(a,menuCard());}).then(function(){wireMenu(a);});
     } else {
       p=askAI(a,text);
@@ -950,9 +952,9 @@ i.nv::after{background:#C0392B}
     function pick(k){return others.slice(k*2%Math.max(others.length,1)).concat(others).slice(0,2);}
     var list0=[{it:it,p:it.p}].concat(pick(0).map(function(x){return {it:x,p:x.p};}));
     var list1=[{it:it,p:Math.max(5,Math.round(it.p*1.1))}].concat(pick(1).map(function(x){return {it:x,p:Math.round(x.p*1.05)};}));
-    var html='<div class="ww"><div class="wwh"><span class="src"><i>'+(src==='Kirana'?'K':'T')+'</i>'+src+'</span><span class="ics" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 3.5L16 11H5"/></svg></span></div><div class="wrow">'+
+    var html='<div class="ww"><div class="wwh"><span class="src"><i>'+(src==='Blinkit'?'B':'Z')+'</i>'+src+'</span><span class="ics" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 3.5L16 11H5"/></svg></span></div><div class="wrow">'+
       shopCard(shops[0],list0,0,true)+shopCard(shops[1],list1,1,false)+'</div></div>';
-    return tool(a,src==='Kirana'?'K':'T','Used '+src,'search_nearby')
+    return tool(a,src==='Blinkit'?'B':'Z','Used '+src,'search_nearby')
     .then(function(){return typeP(a,'Here are the best places for <b>'+it.n.toLowerCase()+'</b> near you.');})
     .then(function(){return block(a,html);})
     .then(function(){return typeP(a,'I’d pick <b>'+P.n+'</b>: rated ★ '+P.r+', only '+P.km+' km away, and '+P.x.charAt(0).toLowerCase()+P.x.slice(1)+'. Tap <b>ADD</b> on what you want.');})
@@ -1161,7 +1163,7 @@ i.nv::after{background:#C0392B}
       })
       .then(function(){},function(){});
   }
-  // "+" connectors menu: Tiffin (food), Kirana (groceries), Gemini
+  // "+" connectors menu: Zomato (food), Blinkit (groceries), Gemini
   (function(){
     var pb=document.getElementById('plusb'), pop=document.getElementById('conpop'), note=document.getElementById('connote');
     function close(){pop.hidden=true;pb.setAttribute('aria-expanded','false');note.hidden=true;}
