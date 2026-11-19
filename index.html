@@ -587,10 +587,10 @@ i.nv::after{background:#C0392B}
     return wait(1000).then(function(){t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';});
   }
   // ONE activity row like an AI assistant (">_ text >"). Words replace each other: fade out, next fades in.
-  var ICON='<svg class="fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 18h7"/></svg>';
-  var CHEV='<svg class="fc" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  var F_ICON='<svg class="fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 18h7"/></svg>';
+  var F_CHEV='<svg class="fc" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
   function liveRow(parent,words){
-    var r=el('div','frow fade now',ICON+'<span class="ft"></span>'+CHEV); parent.appendChild(r); down();
+    var r=el('div','frow fade now',F_ICON+'<span class="ft"></span>'+F_CHEV); parent.appendChild(r); down();
     var ft=r.querySelector('.ft'), i=0, timer=null, swapT=null, want=null, shown=0;
     function show(t){ ft.classList.remove('in'); ft.classList.add('out');
       swapT=setTimeout(function(){ ft.textContent=t; ft.classList.remove('out'); ft.classList.add('in'); }, reduce?0:220); }
@@ -1152,7 +1152,14 @@ i.nv::after{background:#C0392B}
     var low=t.toLowerCase();
     // the AI just asked "Do you need tea?" and the visitor said yes
     if(teaAsked && /^(yes|yeah|yea|ya|yep|sure|ok|okay|ofc|of course|please|yes please|why not|need|i need)\b/.test(low)){ teaAsked=false; return food('I need tea'); }
-    teaAsked=false;
+    var wasTea=teaAsked; teaAsked=false;
+    // saying NO to food/tea must never place an order
+    if(/\b(no|not|dont|don't|do not|nope|nah|never|no need|cancel|stop|skip|later)\b/.test(low) && (wasTea || findItem(t) || /(tea|coffee|food|order|eat|drink|hungry)/.test(low))){
+      if(busy)return; busy=true; send.disabled=true; startTurn(t);
+      var na=el('div','a'); thread.appendChild(na);
+      typeP(na,(wasTea||/tea/.test(low))?'No problem, no tea 🙂 Ask me anything about Manikandan.':'No problem, I won’t order anything 🙂 Ask me anything about Manikandan.').then(function(){busy=false;send.disabled=false;});
+      return;
+    }
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
     if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');
