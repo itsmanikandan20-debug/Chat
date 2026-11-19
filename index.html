@@ -488,6 +488,7 @@ i.nv::after{background:#C0392B}
 .conok{font-size:11.5px;color:#1E6B45;white-space:nowrap}
 .condemo{font-size:11px;color:var(--muted);padding:4px 8px 2px;border-top:1px solid var(--rule);margin-top:4px}
 .connote{font-size:12.5px;color:var(--muted);padding:6px 8px}
+.a p.bl{margin-top:4px;margin-bottom:4px;padding-left:18px;text-indent:-14px}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
 .rcopy:hover{color:var(--ink)}
 
@@ -593,7 +594,7 @@ i.nv::after{background:#C0392B}
   function down(){scroll.scrollTop=scroll.scrollHeight;}
   function wait(ms){return new Promise(function(r){setTimeout(r,reduce?0:ms);});}
   function typeP(parent,html){
-    var p=el('p');parent.appendChild(p);
+    var p=el('p');if(/^\s*[•\-\*] /.test(html)){p.className='bl';html=html.replace(/^\s*[\-\*] /,'• ');}parent.appendChild(p);
     if(reduce){p.innerHTML=html;down();return Promise.resolve();}
     var tk=html.split(/(<[^>]+>|\s+)/).filter(Boolean),out='',i=0;
     return new Promise(function(res){(function step(){

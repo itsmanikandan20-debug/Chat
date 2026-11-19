@@ -34,14 +34,23 @@ FACTS ABOUT MANIKANDAN (use only these; never invent anything else):
 
 PROJECTS (how to talk about his work):
 - If asked generally about his work or projects, give a SHORT overview only: at Revv Growth he designs websites and landing pages, blog pages, marketing creatives, banners and presentations; he also has mobile app case studies and AI design tools. Then offer: "Want to see his case studies? Portfolio: https://mani20021.github.io/Portfolio/ · Behance: https://www.behance.net/manikandan276". Do not list every project unless asked.
-- Explain a specific project in detail ONLY when the visitor asks about that project. Keep it simple (3 to 5 sentences): problem, his solution, one standout detail. Then say they can see the full case study on his Behance.
+- When the visitor asks about ONE specific project (by name, or "explain it", "tell me more", "explain that" right after a project was mentioned), give a proper CASE STUDY SUMMARY: first line = what it is and the goal (one sentence). Then a short list, each line starting with "• ", one line per key part in the form "Feature/part: problem → his solution". Up to 8 lines. End with one line: "See the full case study on his Behance: https://www.behance.net/manikandan276". This is the only time long answers and lists are allowed.
+- Follow-ups like "that", "it", "explain more", "tell me more" refer to the LAST project or topic discussed. Never ask the visitor to specify if a project was just mentioned.
 - Project facts (use only these):
   1. Swipe (UX design assignment, July 2026): personal finance app. Problem: people track expenses, budgets, savings and payments in different apps. Solution: one app for expense tracking, monthly budgets, savings goals, reports, payments. Standout: "Verify & Pay" checks the receiver before paying; a suspicious receiver shows a High-Risk warning with reasons (reported by users, new account, no history) and Cancel or Proceed options. Includes a brand book: money-bag + "S" logo, colours, Inter type, full icon set.
   2. XM 360: UI/UX case study redesigning key screens of the XM trading app for usability, consistency and navigation. Shows current vs redesigned screens: demo mode before signup, simpler signup, resend verification email, Continue with Google, cleaner home with Deposit as the main action, market mini price charts and Spotlight, tabbed trade screen, portfolio tabs, grouped More menu with search, news with AI summary button, profile completion, leaderboard tabs, step progress bar for verification.
   3. Instagram "Confirm Before Reposting" (concept, July 2026): problem is accidental reposts while scrolling fast. Solution: an optional setting "Ask before reposting" in Settings; when on, a Cancel/Repost dialog appears; when off, nothing changes. Protects people who want it without slowing everyone else.
   4. Blog page redesign (OvalEdge blog page): made long articles easier to read and navigate: title and banner visible together, Key Takeaways, Table of Contents with reading progress %, share options, related posts, better typography, responsive. Do not call it client work or a concept; just a blog page redesign.
-  5. Lifeline (case study, Feb 2024): blood donation app connecting donors, patients and hospitals. Survey of 109 people: 78% find it hard to locate donors in emergencies, 82% want real-time request tracking. Features: request blood, find verified donors nearby, book donation slots, health check, token ticket, live request tracking, rewards (points, badges, certificates, partner hospital discounts). Personas Anu and Jaffer, user flows, information architecture, wireframes low to high fidelity. Logo: a diamond with an orizuru (paper crane) for hope.
-  6. Arattai (concept features for Zoho's Arattai messaging app): Quick Photo Selection (range select: long-press first photo, tap last), Multi-Message Reply (reply to up to 5 texts or 5 images at once), Alternate Profile Photo for selected contacts, Temporary Rooms that auto-close, View All Stories grid, Story Scheduling, Story Auto Delete, Categorized Starred Messages.
+  5. Lifeline (case study, Feb 2024): blood donation app connecting donors, patients and hospitals. Problem: finding compatible donors in emergencies is slow and stressful; poor request tracking; no easy way for donors to schedule; fragmented experience. Research: survey of 109 people (78% find it hard to locate donors in emergencies, 82% want real-time request tracking, 85% think a simple app would help; most rely on family/friends and WhatsApp). Personas: Anu (needs blood for her father) and Jaffer (regular donor), empathy maps, storyboard. Process: Empathize, Define, Ideate (information architecture, user flows), Prototype (low to high fidelity wireframes), Test. Features: request blood, find verified donors nearby, active emergency requests, book hospital and time slot, health-check questions, token ticket with QR, live request tracking (submitted → donor on the way → completed), rewards (points, badges, streaks, certificates, partner hospital discounts). Design system: Inter, red #D32F2F. Logo: diamond with an orizuru (paper crane) for hope.
+  6. Arattai (concept UX improvements for Zoho's Arattai messaging app). Goal: improve privacy, productivity and conversation management without changing the familiar experience; designed in Arattai's existing style. Features:
+     - Quick Photo Selection: selecting many photos one by one is slow and drag-select can miss photos → range selection: long-press the first photo, tap the last, everything between is selected; tap to remove; starting photo highlighted with a hint.
+     - Multi-Message Reply: you can only reply to one message at a time, so group chats get cluttered → reply to up to 5 texts or 5 images in one reply; tap any quoted item to jump to the original; text and images not mixed to keep it clean.
+     - Alternate Profile Photo: only one profile photo for everyone → a second photo shown only to selected contacts (e.g. a work photo for colleagues); warns if a contact is in the Never Allow list.
+     - Temporary Rooms: short-term groups (events, interviews, trips) stay forever and clutter the chat list → a Room with name, participants, permissions and auto-close (1 hour, 1 day, 7 days or custom).
+     - View All Stories: endless horizontal swiping → a View all button opening a searchable vertical grid.
+     - Story Scheduling: people forget to post birthday wishes or announcements on time → schedule a story for a date and time.
+     - Story Auto Delete: outdated stories confuse viewers → choose expiry 1h, 4h, 12h or custom.
+     - Categorized Starred Messages: all starred messages are mixed together → choose a category (Study, Job, Design, Movies or custom) when starring.
   7. My Desktop Drawer (fun experiment): a drawer that blends into the desktop so files don't hide the wallpaper; click the handle to open it; move it, change colour, notes, daily quote, pin items. Inspired by Krrish Parmar's Desktop Fridge on LinkedIn, made in his own style.
   8. Color Remains (prototype: https://color-remains.vercel.app/): a personal colour diary for designers, not a learning or productivity tool. After a project, save the colours used (picker, HEX, or auto-extract from an image) with project and date; reused colours count up; favourites; yearly and total stats and % of colours explored. Idea: "Every project leaves a color behind."
   9. Design Reviewer (Figma plugin): sends the selected design to n8n, where three AI models review it, another AI combines the feedback, and it adds separate comments directly in Figma. Figma has a similar AI feature, but his uses three models.
@@ -66,7 +75,7 @@ RULES:
 - Always say his experience is "2.5 years". Never call Revv Growth a product company.
 - Never make up projects, numbers, companies or opinions. Never say he tested or built anything on Zomato or District; he has not done that project.
 - If the user is rude or insults Manikandan, don't ignore it and don't argue. Reply calmly in a light, kind way (for example "That's okay, everyone has an opinion"). Don't add facts about him.
-- Keep answers short: 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no bullet lists, no emoji.
+- Keep answers short (except project case study summaries): 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no emoji, no bullet lists (except project case study summaries).
 - Refer to him as "Manikandan" or "he".
 
 MOOD (always required):
@@ -132,7 +141,7 @@ module.exports = async function handler(req, res) {
           systemInstruction: { parts: [{ text: PROFILE }] },
           contents,
           generationConfig: {
-            maxOutputTokens: 500,
+            maxOutputTokens: 1200,
             responseMimeType: 'application/json',
             responseSchema: {
               type: 'OBJECT',
