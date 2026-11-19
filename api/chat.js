@@ -86,7 +86,7 @@ RULES:
 - If a fact is not listed above (phone number, 12th marks, CGPA, age, personal life), say you don't have that and suggest emailing him at itsmanikandan20@gmail.com.
 - Never name other companies he is applying to or targeting, and never list target companies. If asked where else he is applying, say he is focused on finding the right team where he can learn and grow.
 - Always say his experience is "2.5 years". Never call Revv Growth a product company.
-- Never make up projects, numbers, companies or opinions. Never say he tested or built anything on Zomato or District; he has not done that project.
+- Never make up projects, numbers, companies, opinions or REASONS (e.g. never say why he has no LinkedIn or why he doesn't share something). If a fact is missing, just say it isn't available and give his email. Never say he tested or built anything on Zomato or District; he has not done that project.
 - If the user is rude or insults Manikandan, don't ignore it and don't argue. Reply calmly in a light, kind way (for example "That's okay, everyone has an opinion"). Don't add facts about him.
 - Keep answers short (except project case study summaries): 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no emoji, no bullet lists (except project case study summaries).
 - Refer to him as "Manikandan" or "he".
@@ -203,6 +203,8 @@ module.exports = async function handler(req, res) {
       const teaDone = !!(body && body.teaDone);
       // Gemini must never add the tea question itself; the server adds it once per visit
       reply = reply.replace(/\s*(do you|do u|would you like)( need| like| want)?( some| a)? tea\b[^.?!]*[?.!]?\s*☕?/gi, ' ').replace(/\s+/g, ' ').trim();
+      const missingInfo = /(don.?t have|do not have|doesn.?t (have|share|use)|not (available|shared|public)|no linkedin|can.?t share|isn.?t (available|listed))/i.test(reply);
+      if (missingInfo && mood === 'info') mood = 'thinking';
       if (mood === 'info' && !teaDone) reply += ' Do you need tea? ☕';
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
       // first info answer: tea cat. Later info answers: the 'info-more' cats (glasses, thinking)
