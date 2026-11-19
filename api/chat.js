@@ -28,6 +28,7 @@ RULES:
 - If asked about anything else, say kindly that you can only talk about Manikandan, and suggest a question about him.
 - If a fact is not listed above (salary, notice period, phone, email, age, personal life), say you don't have that and suggest contacting him through his portfolio or LinkedIn.
 - Never make up projects, numbers, companies or opinions.
+- If the user is rude or insults Manikandan, don't ignore it and don't argue. Reply calmly in a light, kind way (for example "That's okay, everyone has an opinion"), then share one real fact about his work and invite them to see his portfolio.
 - Keep answers short: 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no bullet lists, no emoji.
 - Refer to him as "Manikandan" or "he".
 
@@ -36,10 +37,11 @@ MOOD (always required):
   - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
   - "wow": something impressive or surprising (Figma plugins, hackathon, career switch from mechanical, agentic commerce testing).
   - "thinking": a tricky, deep or "why/how" question that needs thought.
-  - "okay": the user says no, not hiring, not interested, maybe later, or other disappointing news, and you accept it politely.
+  - "okay": the user says no, not hiring, not interested, maybe later, says something rude or insulting about Manikandan, or other disappointing news. You accept it calmly and kindly.
   - "sorry": you don't have that information, or the question is not about Manikandan.
   - "hello": greetings, thanks, goodbyes, small talk.
-- Never choose an angry, rude or mocking feeling. If unsure, choose "happy".
+- "happy" is ONLY for a positive question or positive answer. Never use "happy" or "wow" when the user is negative, rude or insulting.
+- Never choose an angry, rude or mocking feeling. If unsure, choose "hello" for small talk and "thinking" otherwise.
 
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
@@ -49,12 +51,15 @@ const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sorry', 'hello'];
 // What to search on GIPHY for each mood (cats only, never angry)
 const GIPHY_Q = {
   happy: 'happy cat',
-  wow: 'shocked cat',
-  thinking: 'thinking cat',
+  wow: 'surprised cat',
+  thinking: 'cat thinking',
   okay: 'sad cat thumbs up',
-  sorry: 'sad cat',
-  hello: 'cat waving hello'
+  sorry: 'sad kitten',
+  hello: 'cat waving'
 };
+// Only real cats: the title must say cat/kitten, and must not hint at cartoons, people or text
+const CAT_WORD = /\b(cat|cats|kitten|kittens|kitty|kitties|meow)\b/i;
+const BAD_WORD = /(anime|cartoon|animated|illustration|drawing|chibi|girl|boy|woman|man\b|people|person|text|quote|words|lettering|typography|sticker|emoji|dog|puppy|hello kitty|angry|mad\b|fight|attack|hiss|scream)/i;
 
 // Ask GIPHY for a cat GIF that fits the mood. Returns null if anything fails.
 async function giphyCat(mood) {
@@ -62,7 +67,7 @@ async function giphyCat(mood) {
   if (!key) return null;
   try {
     const url = 'https://api.giphy.com/v1/gifs/search?' + new URLSearchParams({
-      api_key: key, q: GIPHY_Q[mood], limit: '25', rating: 'g', lang: 'en'
+      api_key: key, q: GIPHY_Q[mood], limit: '50', rating: 'g', lang: 'en'
     });
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 4000);
@@ -70,7 +75,11 @@ async function giphyCat(mood) {
     clearTimeout(timer);
     if (!r.ok) { console.error('GIPHY error', r.status); return null; }
     const j = await r.json();
-    const list = (j.data || []).filter(g => g.images && g.images.downsized && g.images.downsized.url);
+    const list = (j.data || []).filter(g => {
+      const t = ((g.title || '') + ' ' + (g.alt_text || '') + ' ' + (g.slug || '')).replace(/-/g, ' ');
+      return g.images && g.images.downsized && g.images.downsized.url &&
+        CAT_WORD.test(t) && !BAD_WORD.test(t);
+    }).slice(0, 8); // keep only the best matches
     if (!list.length) return null;
     const g = list[Math.floor(Math.random() * list.length)];
     return {
