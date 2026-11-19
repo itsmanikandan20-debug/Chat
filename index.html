@@ -685,7 +685,7 @@ i.nv::after{background:#C0392B}
       .then(function(){return typeP(a,'He also creates UX case studies and builds AI design tools, like a Figma plugin where three AI models review designs.');})
       .then(function(){return typeP(a,'Right now he is <b>open to new opportunities</b>. He wants to join a bigger team, learn from senior designers and grow as a designer.');});
     },
-    work:function(a){
+    work:function(a,intro){
       var B=LINKS.behance, P=LINKS.portfolio;
       function th(kind,c1,c2){
         var inner={
@@ -723,9 +723,14 @@ i.nv::after{background:#C0392B}
           item(0,'bolt','#F9E0D3','#D2552E','Mini AI design assistant','Finds UI/UX issues, suggests fixes',B)+
           item(0,'poster','#F7E2B8','#B98A1D','Color Remains','A colour diary for designers','https://color-remains.vercel.app/')+
           item(0,'slides','#DDF1E5','#21865A','My Desktop Drawer','A fun desktop experiment','https://www.behance.net/gallery/258358513/My-Desktop-Drawer-A-Fun-Desktop-Experiment'),B)+
+        card('Profiles &amp; contact','Links','','',
+          item(0,'web','#F6D7C6','#C2603F','Portfolio','mani20021.github.io',P)+
+          item(0,'poster','#D6E2F7','#3B5BA8','Behance','All case studies',B)+
+          item(0,'chart','#E3DAF3','#6A4FB0','GitHub · UI-Finder','Code experiments','https://github.com/itsmanikandan20-debug/UI-Finder')+
+          item(0,'slides','#F7E2B8','#B98A1D','Email','itsmanikandan20@gmail.com','mailto:itsmanikandan20@gmail.com'),B)+
         '</div></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
-      .then(function(){return typeP(a,'Here’s his work. Swipe across to see everything.');})
+      .then(function(){return typeP(a,intro||'Here’s his work. Swipe across to see everything.');})
       .then(function(){return block(a,html);});
     },
     other:function(a){return typeP(a,'You can ask about his current status or his work, or open his profile above.');}
@@ -1195,6 +1200,7 @@ i.nv::after{background:#C0392B}
     }
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
     if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
+    if(/\b(links?|url|urls)\b/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are the links, one for each case study. Tap VIEW to open.').then(function(){busy=false;send.disabled=false;}); return; }
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');
     food(t);
   });
