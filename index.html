@@ -1215,7 +1215,7 @@ i.nv::after{background:#C0392B}
     }
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
     if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
-    if(/\b(links?|url|urls)\b/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are the links, one for each case study. Tap VIEW to open.').then(function(){busy=false;send.disabled=false;}); return; }
+    if(/\b(links?|url|urls)\b/.test(low) && !/(linkedin|phone|number|mobile|email|mail|contact|resume|\bcv\b|whatsapp|github)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are the links, one for each case study. Tap VIEW to open.').then(function(){busy=false;send.disabled=false;}); return; }
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');
     food(t);
   });
