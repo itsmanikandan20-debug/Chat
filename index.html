@@ -1063,6 +1063,7 @@ i.nv::after{background:#C0392B}
     });
     b2.addEventListener('click',function(){getBlob(m).then(function(blob){save(blob);flash(b2,'Saved ✓','Download');}).catch(function(){window.open(m.file,'_blank');});});
   }
+  var teaAsked=false;
   function askAI(a,text){
     var t=el('div','tool fade','<span class="l"><span class="ic">G</span><span>Used Gemini · <code>ask_about_manikandan</code></span></span><span class="spin"></span>');
     a.appendChild(t);down();
@@ -1071,7 +1072,7 @@ i.nv::after{background:#C0392B}
     return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})})
       .then(function(r){return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
       .then(function(res){
-        var reply=res.reply, meme=res.meme;
+        var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info');
         t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';
         aiHist.push({role:'model',text:reply});
         var parts=fmt(reply).split('\n').filter(Boolean), ch=Promise.resolve();
@@ -1098,6 +1099,9 @@ i.nv::after{background:#C0392B}
     input.value='';
     if(!unlocked){ask(t,null);return;}
     var low=t.toLowerCase();
+    // the AI just asked "Do you need tea?" and the visitor said yes
+    if(teaAsked && /^(yes|yeah|yea|ya|yep|sure|ok|okay|ofc|of course|please|yes please|why not|need|i need)\b/.test(low)){ teaAsked=false; return food('I need tea'); }
+    teaAsked=false;
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
     if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');

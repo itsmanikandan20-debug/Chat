@@ -143,5 +143,10 @@
     "id": "sad-7",
     "mood": "sad",
     "file": "/memes/sad-7.jpg"
+  },
+  {
+    "id": "info-tea",
+    "mood": "info",
+    "file": "/memes/info-tea.jpg"
   }
 ]

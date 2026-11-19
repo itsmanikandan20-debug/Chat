@@ -54,7 +54,8 @@ RULES:
 
 MOOD (always required):
 - After writing your reply, read the user's question and your reply, and pick the ONE mood that best matches the feeling of your reply:
-  - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
+  - "info": a normal, plain answer that just gives information about him (experience, skills, tools, education, location, projects, salary, notice period, work mode, favourites). This is the most common mood.
+  - "happy": the user says something nice or positive about him, or the answer is good news that makes him look great.
   - "hire": the user says they will hire him, want to interview him, will call him, will share his profile, like him for a role, or anything that moves him closer to a job. Thank them warmly and say he would love to connect (his email is itsmanikandan20@gmail.com).
   - "wow": something impressive or surprising (Figma plugins, hackathon, UI-Finder, AI design agent, career switch from mechanical), or the user says wow, amazing, impressive, nice, great.
   - "shock": the user is surprised or can't believe something: "really?", "seriously?", "what?!", "no way", "omg", "are you sure?", or the answer is unexpected (for example a mechanical engineer who became a designer). Shock is surprise, wow is being impressed.
@@ -65,12 +66,12 @@ MOOD (always required):
   - "sorry": the question is not about Manikandan at all (off-topic).
   - "hello": greetings, thanks, goodbyes, small talk.
 - "happy" is ONLY for a positive question or positive answer. Never use "happy" or "wow" when the user is negative, rude or insulting.
-- Never choose an angry, rude or mocking feeling. If unsure, choose "hello" for small talk and "thinking" otherwise.
+- Never choose an angry, rude or mocking feeling. If unsure, choose "info".
 
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
+const MOODS = ['info', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -133,17 +134,19 @@ module.exports = async function handler(req, res) {
     }
     const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
     const raw = parts.map(p => p.text || '').join('').trim();
-    let reply = raw, meme = null;
+    let reply = raw, meme = null, mood = null;
     try {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
-      const mood = MOODS.includes(j.mood) ? j.mood : 'happy';
+      mood = MOODS.includes(j.mood) ? j.mood : 'info';
+      // Normal info answers end with a friendly tea offer (the site can then order tea)
+      if (mood === 'info' && !/tea/i.test(reply)) reply = reply.replace(/\s*$/, '') + ' Do you need tea? ☕';
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
       const own = MEMES.filter(m => m.mood === mood);
       if (own.length) meme = { file: own[Math.floor(Math.random() * own.length)].file, mood };
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
-    return res.status(200).json({ reply, meme });
+    return res.status(200).json({ reply, meme, mood });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'Something went wrong' });
