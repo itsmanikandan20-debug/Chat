@@ -178,5 +178,20 @@
     "id": "info-3",
     "mood": "info-more",
     "file": "/memes/info-3.jpg"
+  },
+  {
+    "id": "info-4",
+    "mood": "info-more",
+    "file": "/memes/info-4.jpg"
+  },
+  {
+    "id": "info-5",
+    "mood": "info-more",
+    "file": "/memes/info-5.jpg"
+  },
+  {
+    "id": "info-6",
+    "mood": "info-more",
+    "file": "/memes/info-6.jpg"
   }
 ]
