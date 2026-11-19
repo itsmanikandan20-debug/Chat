@@ -51,13 +51,13 @@ const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sad', 'sorry', 'hello'];
 
 // What to search on GIPHY for each mood (cats only, never angry)
 const GIPHY_Q = {
-  happy: 'happy cat',
+  happy: 'happy cat smiling',
   wow: 'surprised cat',
-  thinking: 'cat thinking',
+  thinking: 'cat thinking hmm',
   okay: 'sad cat thumbs up',
   sad: 'crying cat',
   sorry: 'sad kitten',
-  hello: 'cat waving'
+  hello: 'cat waving hi'
 };
 // Only real cats: the title must say cat/kitten, and must not hint at cartoons, people or text
 const CAT_WORD = /\b(cat|cats|kitten|kittens|kitty|kitties|meow)\b/i;
@@ -81,7 +81,7 @@ async function giphyCat(mood) {
       const t = ((g.title || '') + ' ' + (g.alt_text || '') + ' ' + (g.slug || '')).replace(/-/g, ' ');
       return g.images && g.images.downsized && g.images.downsized.url &&
         CAT_WORD.test(t) && !BAD_WORD.test(t);
-    }).slice(0, 8); // keep only the best matches
+    }).slice(0, 3); // only GIPHY's top 3 most relevant matches
     if (!list.length) return null;
     const g = list[Math.floor(Math.random() * list.length)];
     return {
