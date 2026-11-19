@@ -389,6 +389,9 @@ i.nv::after{background:#C0392B}
 .rider{width:170px;height:120px;display:block;animation:rbump .25s ease-in-out infinite alternate}
 @keyframes rbump{to{transform:translateY(-3px)}}
 .ask{position:absolute;left:50%;top:0;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:14px;padding:8px 12px;border-radius:12px;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.ask{pointer-events:auto}
+.askcopy{margin-left:8px;border:0;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;cursor:pointer}
+.askcopy:hover{background:#FDE7DC}
 .ask.pop{animation:askpop .3s cubic-bezier(.3,1.5,.5,1)}
 @keyframes askpop{from{transform:translateX(-50%) scale(.7);opacity:0}}
 .u.erase{transition:opacity .4s,transform .4s;opacity:0;transform:scale(.9)}
@@ -1063,9 +1066,17 @@ i.nv::after{background:#C0392B}
     // Cash on delivery: rider waits in the middle until the visitor types 💸
     wait(reduce?0:1500).then(function(){
       say('Hi! That’s ₹'+cash+' please 🙂 Type 💸 and send to pay');
+      // laptops have no emoji key: let the visitor copy 💸 and paste it
+      var cbtn=el('button','askcopy'); cbtn.type='button'; cbtn.textContent='Copy 💸';
+      cbtn.addEventListener('click',function(){
+        function done(){cbtn.textContent='Copied! Paste (Ctrl+V) & send';input.focus({preventScroll:true});}
+        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText('💸').then(done,function(){input.value='💸';done();});}
+        else{input.value='💸';done();}
+      });
+      ask.appendChild(document.createTextNode(' ')); ask.appendChild(cbtn);
       if(PH0===null)PH0=input.placeholder; input.placeholder='Type 💸 to pay ₹'+cash; input.focus({preventScroll:true});
       codPending={
-        nag:function(){say('Please type 💸 to pay ₹'+cash+' 🙂');},
+        nag:function(){var b=ask.querySelector('.askcopy');say('Please type 💸 to pay ₹'+cash+' 🙂');if(b){ask.appendChild(document.createTextNode(' '));ask.appendChild(b);}},
         pay:function(u){
           input.placeholder=PH0; say('Thank you! Enjoy 😋');
           // the 💸 message erases itself from the chat
