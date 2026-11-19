@@ -57,7 +57,8 @@ MOOD (always required):
   - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
   - "wow": something impressive or surprising (Figma plugins, hackathon, career switch from mechanical, agentic commerce testing).
   - "thinking": a tricky, deep or "why/how" question that needs thought.
-  - "okay": the user says no, not hiring, not interested, maybe later, or other disappointing news. You accept it calmly and kindly.
+  - "okay": (not for a plain "ok") the user says no, not hiring, not interested, maybe later, or other disappointing news. You accept it calmly and kindly.
+  - "ok": the user just says ok, okay, fine, sure, got it, alright, noted, cool, or agrees or acknowledges something. Reply briefly.
   - "sad": the user is rude, insults Manikandan, or says he is bad, useless or knows nothing.
   - "sorry": the question is not about Manikandan, or you don't have that information.
   - "hello": greetings, thanks, goodbyes, small talk.
@@ -67,7 +68,7 @@ MOOD (always required):
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sad', 'sorry', 'hello'];
+const MOODS = ['happy', 'wow', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
