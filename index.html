@@ -425,6 +425,17 @@ i.nv::after{background:#C0392B}
 .ditem:disabled{cursor:default}
 .ditem.nom{animation:nom .65s ease-in-out}
 @keyframes nom{0%{transform:scale(1)}20%{transform:scale(.9) rotate(-8deg)}40%{transform:scale(.8) rotate(8deg)}60%{transform:scale(.62) rotate(-6deg)}80%{transform:scale(.4)}100%{transform:scale(.15);opacity:.3}}
+.ditem.drained{filter:grayscale(1);opacity:.35;transform:scale(.92)}
+.cashb{animation:wig 1.2s ease-in-out infinite}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.cashb.paygo{animation:paygo .7s ease-in forwards}
+@keyframes paygo{0%{transform:scale(1)}30%{transform:scale(1.15) translateY(-6px)}100%{transform:translate(80px,-70px) scale(.3) rotate(25deg);opacity:0}}
+.vbtn{display:block;width:100%;border:0;background:none;cursor:pointer;font-family:inherit}
+.plead svg{width:120px;height:96px;display:block}
+.plead .pp{animation:plp 1s ease-in-out infinite}
+@keyframes plp{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.behl{display:inline-block;color:var(--accent);font-weight:600;text-decoration:none;border:1px solid var(--rule);border-radius:10px;padding:10px 14px;background:var(--panel)}
+.behl:hover{border-color:var(--ink)}
 .ditem.empty{animation:plate .4s cubic-bezier(.3,1.5,.5,1)}
 @keyframes plate{from{transform:scale(.5)}to{transform:scale(1)}}
 
@@ -859,7 +870,7 @@ i.nv::after{background:#C0392B}
       h+='<div class="wit"><span class="ethumb" aria-hidden="true">'+x.it.e+'</span><div><div class="nm">'+x.it.n+'</div><div class="pr">₹'+x.p+'.00</div></div>'+
          '<button type="button" class="addb" data-s="'+idx+'" data-n="'+x.it.n+'" data-p="'+x.p+'">ADD</button></div>';
     });
-    return h+'<span class="vmore">View more</span></div>';
+    return h+'<button type="button" class="vmore vbtn">View more</button></div>';
   }
   function orderFlow(a,it,q){
     var src=it.sec.src, P=SHOPS[it.shop], A=ALT[it.shop];
@@ -906,7 +917,7 @@ i.nv::after{background:#C0392B}
       pl.textContent='Order placed ✓';
       busy=true;send.disabled=true;
       var total=price*n;
-      var p= m==='upi' ? payUPI(a,it,n,S,total) : typeP(a,'Order placed. Please keep <b>₹'+total+'</b> cash ready when it arrives.').then(function(){return wait(500);}).then(function(){deliver(it,n,S);});
+      var p= m==='upi' ? payUPI(a,it,n,S,total) : typeP(a,'Order placed. Please keep <b>₹'+total+'</b> cash ready. Pay the rider when it arrives.').then(function(){return wait(500);}).then(function(){deliver(it,n,S,total);});
       p.then(function(){busy=false;send.disabled=false;});
     });
   }
@@ -939,7 +950,7 @@ i.nv::after{background:#C0392B}
     });
   }
 
-  function deliver(it,q,S){
+  function deliver(it,q,S,cash){
     var main=document.querySelector('.main');
     var road=el('div','road');
     var r=scroll.getBoundingClientRect(), mr=main.getBoundingClientRect();
@@ -948,24 +959,58 @@ i.nv::after{background:#C0392B}
     main.appendChild(road);
     var sc=road.querySelector('.scooter');
     requestAnimationFrame(function(){requestAnimationFrame(function(){sc.classList.add('go');});});
-    wait(reduce?0:1250).then(function(){
-      var box=sc.querySelector('.sbox'); box.style.visibility='hidden';
-      var d=el('div','a');
-      var drink=it.sec.id==='drinks'||/milk|juice/i.test(it.n);
+    var drink=it.sec.id==='drinks'||/milk|juice|tea|coffee|lassi|soda|coke|shake/i.test(it.n);
+    function handOver(d){
       var emo=''; for(var i=0;i<Math.min(q,5);i++) emo+='<button type="button" class="ditem" aria-label="'+(drink?'Drink':'Eat')+' '+it.n+'">'+it.e+'</button>';
-      d.innerHTML='<div class="delivered"><span class="dem">'+emo+'</span><span class="dcap">Delivered from '+S.n+'. Tap to '+(drink?'drink':'eat')+'!</span></div>';
-      thread.appendChild(d); down();
+      d.innerHTML='<div class="delivered"><span class="dem">'+emo+'</span><span class="dcap">'+(cash?'Paid ₹'+cash+' in cash. ':'')+'Delivered from '+S.n+'. Tap to '+(drink?'drink':'eat')+'!</span></div>';
+      down();
       var left=Math.min(q,5), cap=d.querySelector('.dcap');
       d.querySelectorAll('.ditem').forEach(function(b){b.addEventListener('click',function(){
         if(b.disabled)return; b.disabled=true; b.classList.add('nom');
-        setTimeout(function(){b.textContent='🍽️';b.classList.remove('nom');b.classList.add('empty');b.setAttribute('aria-label','Empty plate');
-          left--; cap.textContent= left>0 ? 'Yum! '+left+' more to go.' : 'All done! Only the plate is left 😋';
+        setTimeout(function(){
+          b.classList.remove('nom');
+          if(drink){ b.classList.add('drained'); b.setAttribute('aria-label','Empty cup'); }
+          else { b.textContent='🍽️'; b.classList.add('empty'); b.setAttribute('aria-label','Empty plate'); }
+          left--; cap.textContent= left>0 ? 'Yum! '+left+' more to go.' : (drink?'All done! Only the empty cup is left 😋':'All done! Only the plate is left 😋');
         }, reduce?0:650);
       });});
+    }
+    wait(reduce?0:1250).then(function(){
+      var box=sc.querySelector('.sbox'); box.style.visibility='hidden';
+      var d=el('div','a'); thread.appendChild(d);
+      if(!cash){ handOver(d); down(); return wait(1400); }
+      // Cash on delivery: the order is handed over only after the 💸 is paid
+      d.innerHTML='<div class="delivered"><span class="dem"><button type="button" class="ditem cashb" aria-label="Pay ₹'+cash+' cash to the rider">💸</button></span><span class="dcap">The rider is here 🛵 Tap 💸 to pay <b>₹'+cash+'</b> cash and get your order.</span></div>';
+      down();
+      var cb=d.querySelector('.cashb');
+      cb.addEventListener('click',function(){
+        if(cb.disabled)return; cb.disabled=true; cb.classList.add('paygo');
+        d.querySelector('.dcap').textContent='Paying ₹'+cash+'…';
+        setTimeout(function(){handOver(d);}, reduce?0:700);
+      });
       return wait(1400);
     }).then(function(){road.remove();});
   }
 
+  /* "View more" on a shop card: cute cat asks to order from here */
+  document.addEventListener('click',function(e){
+    var v=e.target.closest&&e.target.closest('.vbtn'); if(!v||busy) return;
+    busy=true; send.disabled=true;
+    var d=el('div','a'); thread.appendChild(d);
+    var cat='<div class="plead fade"><svg viewBox="0 0 120 96" aria-hidden="true"><defs><linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs>'+
+      '<path d="M26 46 L22 10 L50 32 Z" fill="url(#pf)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M29 40 L27 20 L43 32 Z" fill="#F4B3B0"/>'+
+      '<path d="M94 46 L98 10 L70 32 Z" fill="url(#pf)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M91 40 L93 20 L77 32 Z" fill="#F4B3B0"/>'+
+      '<ellipse cx="60" cy="60" rx="42" ry="34" fill="url(#pf)" stroke="#5A3A22" stroke-width="2"/>'+
+      '<ellipse cx="44" cy="56" rx="9" ry="10.5" fill="#2A1E15"/><ellipse cx="76" cy="56" rx="9" ry="10.5" fill="#2A1E15"/>'+
+      '<circle cx="47" cy="52" r="3.4" fill="#fff"/><circle cx="79" cy="52" r="3.4" fill="#fff"/><circle cx="41" cy="60" r="1.6" fill="#fff"/><circle cx="73" cy="60" r="1.6" fill="#fff"/>'+
+      '<path d="M37 44 q7 -5 13 -1 M83 44 q-7 -5 -13 -1" stroke="#5A3A22" stroke-width="2" fill="none" stroke-linecap="round"/>'+
+      '<path d="M57 67 h6 l-3 3.4z" fill="#E0706A"/><path d="M54 75 q6 -4 12 0" stroke="#5A3A22" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
+      '<ellipse cx="32" cy="70" rx="6" ry="3.5" fill="#F4A3A0" opacity=".6"/><ellipse cx="88" cy="70" rx="6" ry="3.5" fill="#F4A3A0" opacity=".6"/>'+
+      '<g class="pp"><ellipse cx="46" cy="92" rx="11" ry="8" fill="url(#pf)" stroke="#5A3A22" stroke-width="2"/><ellipse cx="74" cy="92" rx="11" ry="8" fill="url(#pf)" stroke="#5A3A22" stroke-width="2"/></g></svg></div>';
+    block(d,cat)
+    .then(function(){return typeP(d,'Please order from here only 🥺 Just tap <b>ADD</b> above.');})
+    .then(function(){busy=false;send.disabled=false;down();});
+  });
 
   /* ---------- Gemini chat about Manikandan (via /api/chat on Vercel) ---------- */
   var aiHist=[];
