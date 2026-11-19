@@ -465,12 +465,13 @@ i.nv::after{background:#C0392B}
 .cpy:hover{border-color:var(--ink)}
 .gcred{white-space:nowrap;margin-left:auto;font-size:11.5px;color:var(--muted);text-decoration:none;font-weight:600;letter-spacing:.02em}
 .gcred:hover{color:var(--ink)}
-.fsteps{display:flex;flex-direction:column;gap:6px;margin:2px 0 4px}
 .frow{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;line-height:1.35}
 .frow .fi{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .frow .fc{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
 .frow .ft{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .frow.now .ft{animation:pulse 1.1s ease-in-out infinite}
+.frow .ft.out{opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;animation:none}
+.frow .ft.in{transition:opacity .25s,transform .25s}
 .frow.fin{color:var(--ink)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
@@ -585,36 +586,47 @@ i.nv::after{background:#C0392B}
     parent.appendChild(t);down();
     return wait(1000).then(function(){t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';});
   }
-  // Fun step list, styled like an AI assistant's activity rows: ">_ step text >"
-  function funSearch(parent,steps,done){
-    var box=el('div','fsteps'); parent.appendChild(box);
-    var ICON='<svg class="fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 18h7"/></svg>';
-    var CHEV='<svg class="fc" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-    function row(txt,cls){var r=el('div','frow fade '+(cls||''),ICON+'<span class="ft"></span>'+CHEV);r.querySelector('.ft').textContent=txt;box.appendChild(r);down();return r;}
-    if(reduce){ row(done,'fin'); return Promise.resolve(); }
-    var ch=Promise.resolve();
-    steps.forEach(function(sx,i){
-      ch=ch.then(function(){var r=row(sx,'now');return wait(800).then(function(){r.classList.remove('now');});});
-    });
-    return ch.then(function(){row(done,'fin');return wait(300);});
-  }
-  var FUN=['Opening Mani’s Figma files 🎨','Asking Mani’s cat 🐱','Flipping through his portfolio 📂','Checking the chai stock ☕','Zooming into Tenkasi 📍','Counting his pixels 🔍','Reading his case studies 📖','Bribing the AI with parotta 🫓','Waking up Gemini 😴','Searching under the sofa 🛋️'];
-  // keeps adding fun step rows until stop() is called (at least 2 rows)
-  function liveSteps(parent){
-    var box=el('div','fsteps'); parent.appendChild(box);
-    var ICON='<svg class="fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 18h7"/></svg>';
-    var CHEV='<svg class="fc" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-    var pool=FUN.slice().sort(function(){return Math.random()-.5;}), n=0, cur=null, stopped=false, timer=null, wantStop=null;
-    function row(txt,cls){var r=el('div','frow fade '+(cls||''),ICON+'<span class="ft"></span>'+CHEV);r.querySelector('.ft').textContent=txt;box.appendChild(r);down();return r;}
-    function next(){
-      if(cur) cur.classList.remove('now');
-      if(wantStop && n>=2){ finish(); return; }
-      if(n>=5){ cur=row(pool[(n++)%pool.length],'now'); timer=setTimeout(next,1500); return; }
-      cur=row(pool[(n++)%pool.length],'now'); timer=setTimeout(next,reduce?0:850);
+  // ONE activity row like an AI assistant (">_ text >"). Words replace each other: fade out, next fades in.
+  var ICON='<svg class="fi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5M12 18h7"/></svg>';
+  var CHEV='<svg class="fc" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  function liveRow(parent,words){
+    var r=el('div','frow fade now',ICON+'<span class="ft"></span>'+CHEV); parent.appendChild(r); down();
+    var ft=r.querySelector('.ft'), i=0, timer=null, swapT=null, want=null, shown=0;
+    function show(t){ ft.classList.remove('in'); ft.classList.add('out');
+      swapT=setTimeout(function(){ ft.textContent=t; ft.classList.remove('out'); ft.classList.add('in'); }, reduce?0:220); }
+    ft.textContent=words[0]; shown=1;
+    function tick(){
+      if(i<words.length-1){ i++; show(words[i]); shown++; }
+      timer=setTimeout(tick, reduce?0:900);
     }
-    function finish(){ clearTimeout(timer); if(cur) cur.classList.remove('now'); stopped=true; row(wantStop.text,'fin'); var r=wantStop.res; wantStop=null; r(); }
-    next();
-    return { stop:function(text){ return new Promise(function(res){ wantStop={text:text,res:res}; if(n>=2||reduce){ finish(); } }); } };
+    function finish(){ clearTimeout(timer); clearTimeout(swapT); r.classList.remove('now'); r.classList.add('fin'); ft.classList.remove('out','in'); ft.textContent=want.text; var res=want.res; want=null; res(); }
+    timer=setTimeout(tick, reduce?0:900);
+    // answer arrived: finish right away, no extra waiting
+    return { stop:function(text){ return new Promise(function(res){ want={text:text,res:res}; finish(); }); } };
+  }
+  // fixed list played fully, then a final text
+  function funSearch(parent,steps,done){ var lr=liveRow(parent,steps); return wait(reduce?0:900*(steps.length-1)+500).then(function(){return lr.stop(done);}); }
+  // words that match the question; anything else: the cat searches
+  function funWords(q){
+    var t=q.toLowerCase(), T=[
+      [/salary|ctc|lpa|pay|package/, ['Counting rupees 💰','Checking his payslip 🧾']],
+      [/notice/, ['Checking the calendar 📅','Counting 30 days 🗓️']],
+      [/experience|years|how long/, ['Counting his years ⏳','Flipping through his career 📂']],
+      [/skill|tool|figma|adobe|software/, ['Opening his Figma toolbox 🎨','Checking his tool belt 🧰']],
+      [/project|case stud|work|portfolio|swipe|arattai|ui-finder/, ['Opening his portfolio 📂','Reading his case studies 📖']],
+      [/educat|degree|college|study|mechanical|engineer|marks|10th|school/, ['Opening his old notebooks 📚','Asking his college 🎓']],
+      [/where|location|tenkasi|relocat|office|remote|home/, ['Checking the map 🗺️','Zooming into Tenkasi 📍']],
+      [/cricket|dhoni/, ['Checking the scoreboard 🏏','Asking the stadium 🏟️']],
+      [/actor|movie|film|ajith|series|anime|watch/, ['Checking his watchlist 🎬','Grabbing popcorn 🍿']],
+      [/game|rdr|gaming/, ['Loading his save file 🎮','Saddling up in RDR2 🤠']],
+      [/food|eat|biryani|parotta|favourite dish/, ['Peeking in his lunch box 🍱','Smelling the biryani 🍛']],
+      [/wwe|cena/, ['Checking the ring 🤼','You can’t see me 👋']],
+      [/hire|interview|job|role|fit|why/, ['Reading his resume 📄','Asking the hiring cat 🐱']],
+      [/ai|agent|n8n|plugin|hackathon|mcp/, ['Waking up the AI agents 🤖','Checking his plugins 🔌']],
+      [/email|contact|reach|phone|linkedin/, ['Finding his inbox 📬','Looking for his number 📇']]
+    ];
+    for(var k=0;k<T.length;k++) if(T[k][0].test(t)) return T[k][1];
+    return ['Cat searching 🐱','Cat sniffing around 🐾'];
   }
   function block(parent,html){var d=el('div');d.innerHTML=html;var c=d.firstElementChild;c.classList.add('fade');parent.appendChild(c);down();return wait(380);}
   function userMsg(text){var u=el('div','u'),d=el('div');d.textContent=text;u.appendChild(d);thread.appendChild(u);down();}
@@ -623,13 +635,7 @@ i.nv::after{background:#C0392B}
 
   var R={
     search:function(a){
-      return funSearch(a,[
-        'Searching designers on Earth 🌍…',
-        'Checking Mars for designers 🔴…',
-        'Asking Jupiter’s moons 🪐…',
-        'Scanning the Milky Way 🌌…',
-        'Zooming back to Tamil Nadu 📍…'
-      ],'Searched 8 planets · 1 designer found ✨')
+      return funSearch(a,['Searching Earth 🌍','Checking Mars 🔴','Back to Tamil Nadu 📍'],'1 designer found ✨')
       .then(function(){return typeP(a,'Here’s who I’d bet on for 2030. <b>Manikandan</b> is my top pick.');})
       .then(function(){return block(a,
         '<div class="pwrap"><div class="catg" aria-hidden="true"><svg viewBox="0 0 100 146"><defs><linearGradient id="fur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs><g class="pic"><rect x="14" y="2" width="82" height="80" rx="4" fill="#FFFFFF" stroke="#D9D2C4" stroke-width="1.5"/><rect x="20" y="8" width="70" height="54" rx="2" fill="#F1DFA8"/><path d="M20 8 h70 v54 h-70z" fill="none"/><path d="M26 8 v54 M34 8 v54 M42 8 v54 M68 8 v54 M76 8 v54 M84 8 v54" stroke="#E6CF8C" stroke-width="1.4"/><path d="M30 62 q0 -15 12 -15 q12 0 12 15 z" fill="#2A2D33"/><path d="M39 47 l3 6 l3 -6z" fill="#fff"/><path d="M41.3 50 h1.4 l.8 9 h-3z" fill="#1C1E22"/><circle cx="42" cy="37" r="7.5" fill="#E2AE85" stroke="#7A4E2D" stroke-width=".8"/><path d="M37.5 34.5 q1.5 -1.4 3 0 M43.5 34.5 q1.5 -1.4 3 0" stroke="#3A2A1E" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M37.5 39 q4.5 4.5 9 0" stroke="#3A2A1E" stroke-width="1.1" fill="#fff"/><path d="M34.5 32 q7.5 -8 15 0 q-1 -5 -7.5 -5.5 q-6.5 .5 -7.5 5.5z" fill="#2A221C"/><path d="M36 47 L42 56 L48 47" stroke="#2F5FC8" stroke-width="2.4" fill="none"/><circle cx="42" cy="57.5" r="3.2" fill="#E9B530" stroke="#A9781A" stroke-width=".8"/><path d="M56 62 q0 -16 13 -16 q13 0 13 16 z" fill="#2A2D33"/><path d="M66 46 l3 6 l3 -6z" fill="#fff"/><circle cx="69" cy="35" r="7.5" fill="#E2AE85" stroke="#7A4E2D" stroke-width=".8"/><path d="M64.6 34 q1.6 1.2 3 0 M70.6 34 q1.6 1.2 3 0" stroke="#3A2A1E" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M66.5 38.8 q2.5 1.4 5 0" stroke="#3A2A1E" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M61.5 30 q7.5 -8 15 0 q-1 -5 -7.5 -5.5 q-6.5 .5 -7.5 5.5z" fill="#2A221C"/><path d="M60 50 Q52 47 46 46.5 M77 51 Q60 44 49 46" stroke="#2A2D33" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="46" cy="46.3" r="1.9" fill="#E2AE85"/><circle cx="49" cy="45.8" r="1.9" fill="#E2AE85"/><text x="55" y="75" text-anchor="middle" font-family="Georgia, serif" font-size="8.2" fill="#3A332A" font-style="italic">Me, awarding me</text></g><ellipse cx="30" cy="84" rx="8" ry="6.5" fill="url(#fur)" stroke="#5A3A22" stroke-width="1.6"/><ellipse cx="78" cy="84" rx="8" ry="6.5" fill="url(#fur)" stroke="#5A3A22" stroke-width="1.6"/><path d="M26 82 v3.5 M30 81 v4.5 M34 82 v3.5 M74 82 v3.5 M78 81 v4.5 M82 82 v3.5" stroke="#5A3A22" stroke-width="1.1" stroke-linecap="round"/><path d="M24 104 L22 80 L42 95 Z" fill="url(#fur)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M26 99 L25.5 86 L36 95 Z" fill="#F4B3B0"/><path d="M84 104 L86 80 L66 95 Z" fill="url(#fur)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M82 99 L82.5 86 L72 95 Z" fill="#F4B3B0"/><ellipse cx="54" cy="116" rx="33" ry="27" fill="url(#fur)" stroke="#5A3A22" stroke-width="2"/><path d="M48 92 q2 6 0 10 M54 90 v12 M60 92 q-2 6 0 10" stroke="#C86F33" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="54" cy="127" rx="15" ry="10" fill="#FBE3CB"/><ellipse cx="42" cy="113" rx="6" ry="7" fill="#2A1E15"/><ellipse cx="66" cy="113" rx="6" ry="7" fill="#2A1E15"/><circle cx="44" cy="110.5" r="2.2" fill="#fff"/><circle cx="68" cy="110.5" r="2.2" fill="#fff"/><circle cx="40.5" cy="115.5" r="1" fill="#fff"/><circle cx="64.5" cy="115.5" r="1" fill="#fff"/><rect class="lid" x="35.5" y="105.5" width="13" height="15" rx="6" fill="#E9944F"/><rect class="lid" x="59.5" y="105.5" width="13" height="15" rx="6" fill="#E9944F"/><ellipse cx="33" cy="124" rx="5" ry="3" fill="#F19C8E" opacity=".55"/><ellipse cx="75" cy="124" rx="5" ry="3" fill="#F19C8E" opacity=".55"/><path d="M50.5 122 h7 l-3.5 4z" fill="#E0706A" stroke="#8C3A35" stroke-width=".8" stroke-linejoin="round"/><path d="M54 126 q-3.5 4.5 -7 1.5 M54 126 q3.5 4.5 7 1.5" stroke="#5A3A22" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M14 120 l16 2 M15 127 l15 -1.5 M94 120 l-16 2 M93 127 l-15 -1.5" stroke="#5A3A22" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="pcard"><div class="pcover"></div><div class="pbody"><span class="toppick">Top pick</span>'+
@@ -1110,7 +1116,7 @@ i.nv::after{background:#C0392B}
   }
   var teaAsked=false, teaDone=false;
   function askAI(a,text){
-    var steps=liveSteps(a);
+    var steps=liveRow(a,funWords(text));
     aiHist.push({role:'user',text:text});
     var hist=aiHist.slice(-10);
     return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone})})
