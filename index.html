@@ -430,7 +430,7 @@ i.nv::after{background:#C0392B}
 @keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
 .cashb.paygo{animation:paygo .7s ease-in forwards}
 @keyframes paygo{0%{transform:scale(1)}30%{transform:scale(1.15) translateY(-6px)}100%{transform:translate(80px,-70px) scale(.3) rotate(25deg);opacity:0}}
-.vbtn{display:block;width:100%;border:0;background:none;cursor:pointer;font-family:inherit}
+.shopmore{display:block;width:100%;border:0;background:none;cursor:pointer;font-family:inherit}
 .plead svg{width:120px;height:96px;display:block}
 .plead .pp{animation:plp 1s ease-in-out infinite}
 @keyframes plp{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -698,13 +698,13 @@ i.nv::after{background:#C0392B}
         return '<span class="thumb" aria-hidden="true"><svg viewBox="0 0 64 64"><defs><linearGradient id="g'+kind+c1.slice(1)+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs><rect width="64" height="64" fill="url(#g'+kind+c1.slice(1)+')"/>'+inner+'</svg></span>';
       }
       function item(t,kind,c1,c2,name,desc,href){
-        return '<div class="wit">'+th(kind,c1,c2)+'<div><div class="nm">'+name+'</div><div class="ds">'+desc+'</div></div><a class="vbtn" href="'+href+'">VIEW</a></div>';
+        return '<div class="wit">'+th(kind,c1,c2)+'<div><div class="nm">'+name+'</div><div class="ds">'+desc+'</div></div><a class="vbtn" href="'+href+'" target="_blank" rel="noopener noreferrer">VIEW</a></div>';
       }
       function card(title,rate,meta,off,items,more){
         return '<div class="wcard"><div class="wt"><h3>'+title+'</h3><span class="rate">'+rate+'</span></div>'+
           (meta?'<div class="wmeta"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 3h4"/></svg>'+meta+'</div>':'')+
           (off?'<div class="woff"><b>✓</b>'+off+'</div>':'')+items+
-          '<a class="vmore" href="'+more+'">View more</a></div>';
+          '<a class="vmore" href="'+more+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       }
       var html='<div class="ww"><div class="wwh"><span class="src"><i>P</i>Portfolio</span><span class="ics" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 3.5L16 11H5"/></svg></span></div><div class="wrow">'+
         card('UX case studies','3 projects','','',
@@ -942,7 +942,7 @@ i.nv::after{background:#C0392B}
       h+='<div class="wit"><span class="ethumb" aria-hidden="true">'+x.it.e+'</span><div><div class="nm">'+x.it.n+'</div><div class="pr">₹'+x.p+'.00</div></div>'+
          '<button type="button" class="addb" data-s="'+idx+'" data-n="'+x.it.n+'" data-p="'+x.p+'">ADD</button></div>';
     });
-    return h+'<button type="button" class="vmore vbtn">View more</button></div>';
+    return h+'<button type="button" class="vmore shopmore">View more</button></div>';
   }
   function orderFlow(a,it,q){
     var src=it.sec.src, P=SHOPS[it.shop], A=ALT[it.shop];
@@ -1066,7 +1066,7 @@ i.nv::after{background:#C0392B}
 
   /* "View more" on a shop card: cute cat asks to order from here */
   document.addEventListener('click',function(e){
-    var v=e.target.closest&&e.target.closest('.vbtn'); if(!v||busy) return;
+    var v=e.target.closest&&e.target.closest('.shopmore'); if(!v||busy) return;
     busy=true; send.disabled=true;
     var d=el('div','a'); thread.appendChild(d);
     var cat='<div class="plead fade"><svg viewBox="0 0 120 96" aria-hidden="true"><defs><linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs>'+
@@ -1089,7 +1089,7 @@ i.nv::after{background:#C0392B}
   function esc(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function fmt(x){
     return esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
-      .replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1">$1</a>')
+      .replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/\n{2,}/g,'\n').trim();
   }
 
