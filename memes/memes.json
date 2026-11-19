@@ -1,4 +1,7 @@
 [
   {"id": "sad-thumbs-up", "mood": "okay", "file": "/memes/sad-thumbs-up.jpg"},
-  {"id": "sad-thumbs-up-2", "mood": "sad", "file": "/memes/sad-thumbs-up.jpg"}
+  {"id": "sad-thumbs-up-backup", "mood": "sad", "file": "/memes/sad-thumbs-up.jpg", "backup": true},
+  {"id": "hello-1", "mood": "hello", "file": "/memes/hello-1.jpg"},
+  {"id": "hello-2", "mood": "hello", "file": "/memes/hello-2.jpg"},
+  {"id": "hello-3", "mood": "hello", "file": "/memes/hello-3.jpg"}
 ]

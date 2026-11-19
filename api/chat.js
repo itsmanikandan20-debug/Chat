@@ -164,11 +164,14 @@ module.exports = async function handler(req, res) {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
       const mood = MOODS.includes(j.mood) ? j.mood : 'happy';
-      // 1st choice: a cat GIF from GIPHY. Backup: our own pictures for that mood.
-      meme = await giphyCat(mood);
+      // 1st choice: Mani's own chosen pictures for this mood. 2nd: a cat GIF from GIPHY. 3rd: backup pictures.
+      const pick = list => list[Math.floor(Math.random() * list.length)];
+      const own = MEMES.filter(m => m.mood === mood && !m.backup);
+      if (own.length) meme = { file: pick(own).file, mood };
+      if (!meme) meme = await giphyCat(mood);
       if (!meme) {
-        const pics = MEMES.filter(m => m.mood === mood);
-        if (pics.length) meme = { file: pics[Math.floor(Math.random() * pics.length)].file, mood };
+        const backup = MEMES.filter(m => m.mood === mood && m.backup);
+        if (backup.length) meme = { file: pick(backup).file, mood };
       }
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
