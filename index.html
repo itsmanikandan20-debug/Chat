@@ -445,10 +445,11 @@ i.nv::after{background:#C0392B}
 /* Meme card (original cat mascot, Cheems-style captions) */
 .meme{width:300px;max-width:100%;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--panel)}
 .mimg{position:relative;aspect-ratio:1/1;background:radial-gradient(circle at 50% 60%,#FFF4E6,#F6DDBF)}
-.mimg svg{position:absolute;left:50%;top:54%;width:62%;transform:translate(-50%,-50%)}
+.mimg.real{aspect-ratio:auto;background:#000}
+.mimg.real img{display:block;width:100%;height:auto}
 .mcap{position:absolute;left:8px;right:8px;text-align:center;font-family:"Anton",Impact,"Arial Black",sans-serif;font-size:24px;line-height:1.08;color:#fff;text-transform:uppercase;letter-spacing:.01em;-webkit-text-stroke:1.5px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,2px 0 0 #000,-2px 0 0 #000,0 -2px 0 #000;word-wrap:break-word}
 .mcap.t{top:10px}.mcap.b{bottom:12px}
-.mbar{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.mbar{display:flex;justify-content:flex-start;gap:8px;align-items:center;padding:8px 10px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
 .cpy{border:1px solid var(--rule);background:var(--panel);border-radius:8px;padding:5px 10px;font-size:13px;font-weight:500}
 .cpy:hover{border-color:var(--ink)}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
@@ -978,39 +979,48 @@ i.nv::after{background:#C0392B}
     try{navigator.clipboard.writeText(txt).then(ok,function(){fallback();});}catch(e){fallback();}
     function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}ta.remove();}
   }
-  function catFace(mood){
-    var eyes={
-      happy:'<path d="M42 62 q7 -8 14 0 M74 62 q7 -8 14 0" stroke="#2A1E15" stroke-width="4" fill="none" stroke-linecap="round"/>',
-      proud:'<path d="M41 60 h15 M74 60 h15" stroke="#2A1E15" stroke-width="4" stroke-linecap="round"/><path d="M40 54 l16 3 M90 54 l-16 3" stroke="#5A3A22" stroke-width="3" stroke-linecap="round"/>',
-      shocked:'<circle cx="49" cy="60" r="8" fill="#fff" stroke="#2A1E15" stroke-width="2.5"/><circle cx="81" cy="60" r="8" fill="#fff" stroke="#2A1E15" stroke-width="2.5"/><circle cx="49" cy="60" r="3.5" fill="#2A1E15"/><circle cx="81" cy="60" r="3.5" fill="#2A1E15"/>',
-      thinking:'<ellipse cx="49" cy="60" rx="5" ry="6.5" fill="#2A1E15"/><ellipse cx="81" cy="60" rx="5" ry="6.5" fill="#2A1E15"/><circle cx="51" cy="57" r="1.8" fill="#fff"/><circle cx="83" cy="57" r="1.8" fill="#fff"/><path d="M42 49 q7 -5 14 -1" stroke="#5A3A22" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    }[mood]||'';
-    var mouth={
-      happy:'<path d="M58 80 q7 9 14 0" stroke="#5A3A22" stroke-width="3" fill="#E0706A" stroke-linecap="round"/>',
-      proud:'<path d="M57 79 q8 6 16 -2" stroke="#5A3A22" stroke-width="3" fill="none" stroke-linecap="round"/>',
-      shocked:'<ellipse cx="65" cy="84" rx="6" ry="8" fill="#7A2E2A" stroke="#5A3A22" stroke-width="2.5"/>',
-      thinking:'<path d="M58 82 h12" stroke="#5A3A22" stroke-width="3" stroke-linecap="round"/>'
-    }[mood]||'';
-    var extra= mood==='thinking' ? '<ellipse cx="100" cy="104" rx="11" ry="9" fill="url(#mf)" stroke="#5A3A22" stroke-width="2.5"/>' :
-               mood==='proud' ? '<path d="M22 22 l4 8 l9 1 l-7 6 l2 9 l-8 -5 l-8 5 l2 -9 l-7 -6 l9 -1z" fill="#F2C230" stroke="#A9781A" stroke-width="1.5"/>' : '';
-    return '<svg viewBox="0 0 130 120" aria-hidden="true"><defs><linearGradient id="mf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs>'+
-      '<path d="M30 46 L26 10 L54 30 Z" fill="url(#mf)" stroke="#5A3A22" stroke-width="3" stroke-linejoin="round"/><path d="M33 40 L31 20 L47 31 Z" fill="#F4B3B0"/>'+
-      '<path d="M100 46 L104 10 L76 30 Z" fill="url(#mf)" stroke="#5A3A22" stroke-width="3" stroke-linejoin="round"/><path d="M97 40 L99 20 L83 31 Z" fill="#F4B3B0"/>'+
-      '<ellipse cx="65" cy="70" rx="48" ry="42" fill="url(#mf)" stroke="#5A3A22" stroke-width="3"/>'+
-      '<path d="M58 30 q3 8 0 13 M65 28 v16 M72 30 q-3 8 0 13" stroke="#C86F33" stroke-width="3" fill="none" stroke-linecap="round"/>'+
-      '<ellipse cx="65" cy="86" rx="20" ry="13" fill="#FBE3CB"/>'+eyes+
-      '<path d="M61 72 h8 l-4 5z" fill="#E0706A"/>'+mouth+
-      '<ellipse cx="34" cy="78" rx="7" ry="4" fill="#F19C8E" opacity=".5"/><ellipse cx="96" cy="78" rx="7" ry="4" fill="#F19C8E" opacity=".5"/>'+
-      '<path d="M8 74 l20 2 M9 83 l19 -2 M122 74 l-20 2 M121 83 l-19 -2" stroke="#5A3A22" stroke-width="1.8" stroke-linecap="round"/>'+extra+'</svg>';
-  }
   function memeCard(m){
-    return '<div class="meme"><div class="mimg"><div class="mcap t">'+esc(m.top)+'</div>'+catFace(m.mood)+'<div class="mcap b">'+esc(m.bottom)+'</div></div>'+
-      '<div class="mbar"><span>Meme by the house cat</span><button type="button" class="cpy"><span>Copy meme</span></button></div></div>';
+    return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Meme: '+esc(m.top+' '+m.bottom)+'"><div class="mcap t">'+esc(m.top)+'</div><div class="mcap b">'+esc(m.bottom)+'</div></div>'+
+      '<div class="mbar"><button type="button" class="cpy c1"><span>Copy image</span></button><button type="button" class="cpy c2"><span>Download</span></button></div></div>';
+  }
+  function memePNG(m){
+    // draw the picture with its captions onto a canvas, like a real meme image
+    return (document.fonts&&document.fonts.load?document.fonts.load('48px Anton'):Promise.resolve()).then(function(){
+      return new Promise(function(res,rej){
+        var img=new Image(); img.onload=function(){
+          var W=600, H=Math.round(img.naturalHeight*W/img.naturalWidth);
+          var c=document.createElement('canvas'); c.width=W; c.height=H; var x=c.getContext('2d');
+          x.drawImage(img,0,0,W,H);
+          function wrap(t,max){var w=t.toUpperCase().split(/\s+/),lines=[],l='';w.forEach(function(word){var tst=l?l+' '+word:word;if(x.measureText(tst).width>max&&l){lines.push(l);l=word;}else l=tst;});if(l)lines.push(l);return lines;}
+          function draw(t,top){
+            var size=Math.round(W*0.085); x.font=size+'px Anton, Impact, Arial Black, sans-serif';
+            x.textAlign='center'; x.lineJoin='round'; x.lineWidth=size*0.16; x.strokeStyle='#000'; x.fillStyle='#fff';
+            var lines=wrap(t,W-40), lh=size*1.08;
+            lines.forEach(function(ln,i){
+              var y= top ? 14+size+i*lh : H-14-(lines.length-1-i)*lh;
+              x.strokeText(ln,W/2,y); x.fillText(ln,W/2,y);
+            });
+          }
+          draw(m.top,true); draw(m.bottom,false);
+          c.toBlob(function(b){b?res(b):rej();},'image/png');
+        }; img.onerror=rej; img.src=m.file;
+      });
+    });
   }
   function wireMeme(a,m){
     var cards=a.querySelectorAll('.meme'), c=cards[cards.length-1];
-    var b=c.querySelector('.cpy');
-    b.addEventListener('click',function(){copyText(m.top+'\n'+m.bottom,b.querySelector('span'),'Copy meme');});
+    var b1=c.querySelector('.c1'), b2=c.querySelector('.c2');
+    function flash(btn,txt,orig){var sp=btn.querySelector('span');sp.textContent=txt;setTimeout(function(){sp.textContent=orig;},1600);}
+    function download(blob){var u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download='manikandan-meme.png';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u);},2000);}
+    b1.addEventListener('click',function(){
+      memePNG(m).then(function(blob){
+        if(navigator.clipboard&&window.ClipboardItem){
+          return navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(function(){flash(b1,'Copied ✓','Copy image');},function(){download(blob);flash(b1,'Downloaded','Copy image');});
+        }
+        download(blob);flash(b1,'Downloaded','Copy image');
+      }).catch(function(){flash(b1,'Try again','Copy image');});
+    });
+    b2.addEventListener('click',function(){memePNG(m).then(function(blob){download(blob);flash(b2,'Saved ✓','Download');});});
   }
   function askAI(a,text){
     var t=el('div','tool fade','<span class="l"><span class="ic">G</span><span>Used Gemini · <code>ask_about_manikandan</code></span></span><span class="spin"></span>');

@@ -3,6 +3,7 @@
 // Optional: GEMINI_MODEL (default below), ALLOWED_ORIGIN (e.g. https://your-site.vercel.app).
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+const MEMES = require('../memes/memes.json');
 
 const PROFILE = `
 You are the hiring assistant on Manikandan's personal website. You only talk about Manikandan.
@@ -30,11 +31,15 @@ RULES:
 - Refer to him as "Manikandan" or "he".
 
 MEME:
-- Along with every answer, write one short, wholesome meme about the answer, in "Cheems" speak (add a playful extra "m" inside some words, e.g. "hemlo", "desigmer", "amazimg", "hire", "gud").
-- Never mean, never mocking anyone, no swearing, no politics. Light, kind, funny. It should make Manikandan look good.
-- top: max 7 words. bottom: max 8 words. mood: one of happy, proud, shocked, thinking.
+- You may add a meme picture under your answer, chosen ONLY from the templates listed below.
+- Add one only when a template really fits the moment. If none fits, leave "meme" out.
+- Write short, wholesome captions in playful "Cheems" speak (an extra "m" in some words, e.g. "hemlo", "gud", "desigmer", "amazimg"). top: max 7 words. bottom: max 8 words.
+- Never mean, never mocking anyone, no swearing, no politics. Light and kind. It should still make Manikandan look good.
 
-OUTPUT: reply with JSON only: {"reply": "...", "meme": {"top": "...", "bottom": "...", "mood": "happy"}}
+TEMPLATES:
+${MEMES.map(m => '- id "' + m.id + '": use when ' + m.when).join('\n')}
+
+OUTPUT: JSON only: {"reply": "...", "meme": {"id": "<template id>", "top": "...", "bottom": "..."}} (omit "meme" if no template fits)
 `.trim();
 
 module.exports = async function handler(req, res) {
@@ -86,14 +91,14 @@ module.exports = async function handler(req, res) {
                 meme: {
                   type: 'OBJECT',
                   properties: {
+                    id: { type: 'STRING', enum: MEMES.map(m => m.id) },
                     top: { type: 'STRING' },
-                    bottom: { type: 'STRING' },
-                    mood: { type: 'STRING', enum: ['happy', 'proud', 'shocked', 'thinking'] }
+                    bottom: { type: 'STRING' }
                   },
-                  required: ['top', 'bottom', 'mood']
+                  required: ['id', 'top', 'bottom']
                 }
               },
-              required: ['reply', 'meme']
+              required: ['reply']
             }
           }
         })
@@ -110,12 +115,9 @@ module.exports = async function handler(req, res) {
     try {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
-      if (j.meme && j.meme.top && j.meme.bottom) {
-        meme = {
-          top: String(j.meme.top).slice(0, 60),
-          bottom: String(j.meme.bottom).slice(0, 70),
-          mood: ['happy', 'proud', 'shocked', 'thinking'].includes(j.meme.mood) ? j.meme.mood : 'happy'
-        };
+      const t = j.meme && MEMES.find(m => m.id === j.meme.id);
+      if (t && j.meme.top && j.meme.bottom) {
+        meme = { file: t.file, top: String(j.meme.top).slice(0, 60), bottom: String(j.meme.bottom).slice(0, 70) };
       }
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
