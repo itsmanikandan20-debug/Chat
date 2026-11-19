@@ -247,6 +247,9 @@ svg.i{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-
 .wit>div{min-width:0}
 .vbtn{border:1px solid #E7A9A0;color:#D4504A;background:#FFF6F5;font-weight:600;font-size:13.5px;letter-spacing:.03em;padding:8px 22px;border-radius:8px;text-decoration:none}
 .vbtn:hover{background:#FCE9E6}
+.wlist{padding:4px 16px 8px;display:flex;flex-direction:column}
+.wit.nothumb{grid-template-columns:1fr auto;margin-top:0;padding:12px 0;border-bottom:1px solid var(--rule)}
+.wlist .vmore{margin-top:6px}
 .vmore{margin-top:12px;text-align:center;color:#D4504A;font-weight:500;font-size:16px;text-decoration:none;padding:6px}
 @media (max-width:560px){.wcard{flex-basis:84%}.wit{grid-template-columns:54px 1fr auto;gap:10px}.thumb,.thumb svg{width:54px;height:54px}.vbtn{padding:7px 14px}}
 
@@ -706,26 +709,18 @@ i.nv::after{background:#C0392B}
           (off?'<div class="woff"><b>✓</b>'+off+'</div>':'')+items+
           '<a class="vmore" href="'+more+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       }
-      var html='<div class="ww"><div class="wwh"><span class="src"><i>P</i>Portfolio</span><span class="ics" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg><svg class="i" viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 3.5L16 11H5"/></svg></span></div><div class="wrow">'+
-        card('UX case studies','3 projects','','',
-          item(0,'phone','#F6C9C6','#C62828','Lifeline · Blood donation app','Research, personas, full app design','https://www.behance.net/gallery/192399823/Blood-Donation-App-UIUX-Case-Study')+
-          item(0,'phone','#B9D3F5','#2F5FC8','Swipe · Finance app','Brand book, Verify &amp; Pay safety flow','https://www.behance.net/gallery/255033349/Swipe-Brand-Book-Designs-Finance-Management-App')+
-          item(0,'phone','#BFE3CF','#1E7F4F','XM 360 · Trading app','Redesign of key screens','https://www.behance.net/gallery/253178551/XM-360-Trading-App-Redesign'),B)+
-        card('Feature concepts','3 projects','','',
-          item(0,'phone','#F3B48A','#C2603F','Arattai · Messaging app','8 new features for Zoho’s app','https://www.behance.net/gallery/244043635/Arattai-App')+
-          item(0,'phone','#F3D6DE','#B04A6A','Instagram · Confirm repost','Stop accidental reposts','https://www.behance.net/gallery/252150973/Instagram-Feature-Improvement-Confirm-Before-Reposting')+
-          item(0,'web','#D6E2F7','#3B5BA8','Blog page redesign','Easier long-form reading','https://www.behance.net/gallery/252222975/Blog-Page-Redesign-UXUI-Case-Study'),B)+
-        card('AI tools &amp; experiments','4 projects','','',
-          item(0,'plug','#E1E6F9','#4357C9','Design Reviewer','Figma plugin, 3 AI models review','https://www.behance.net/gallery/255906623/AI-Design-Reviewer-Figma-Plugin-n8n')+
-          item(0,'bolt','#F9E0D3','#D2552E','Mini AI design assistant','Finds UI/UX issues, suggests fixes','https://www.behance.net/gallery/256506207/Mini-AI-Design-Assistant')+
-          item(0,'poster','#F7E2B8','#B98A1D','Color Remains','A colour diary for designers','https://color-remains.vercel.app/')+
-          item(0,'slides','#DDF1E5','#21865A','My Desktop Drawer','A fun desktop experiment','https://www.behance.net/gallery/258358513/My-Desktop-Drawer-A-Fun-Desktop-Experiment'),B)+
-        card('Profiles &amp; contact','Links','','',
-          item(0,'web','#F6D7C6','#C2603F','Portfolio','mani20021.github.io',P)+
-          item(0,'poster','#D6E2F7','#3B5BA8','Behance','All case studies',B)+
-          item(0,'chart','#E3DAF3','#6A4FB0','GitHub · UI-Finder','Code experiments','https://github.com/itsmanikandan20-debug/UI-Finder')+
-          item(0,'slides','#F7E2B8','#B98A1D','Email','itsmanikandan20@gmail.com','mailto:itsmanikandan20@gmail.com'),B)+
-        '</div></div>';
+      var html='<div class="ww wlist">'+
+        '<div class="wit nothumb"><div><div class="nm">Lifeline · Blood donation app</div><div class="ds">Research, personas, full app design</div></div><a class="vbtn" href="https://www.behance.net/gallery/192399823/Blood-Donation-App-UIUX-Case-Study" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Swipe · Finance app</div><div class="ds">Brand book, Verify &amp; Pay safety flow</div></div><a class="vbtn" href="https://www.behance.net/gallery/255033349/Swipe-Brand-Book-Designs-Finance-Management-App" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">XM 360 · Trading app</div><div class="ds">Redesign of key screens</div></div><a class="vbtn" href="https://www.behance.net/gallery/253178551/XM-360-Trading-App-Redesign" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Arattai · Messaging app</div><div class="ds">8 new features for Zoho’s app</div></div><a class="vbtn" href="https://www.behance.net/gallery/244043635/Arattai-App" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Instagram · Confirm repost</div><div class="ds">Stop accidental reposts</div></div><a class="vbtn" href="https://www.behance.net/gallery/252150973/Instagram-Feature-Improvement-Confirm-Before-Reposting" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Blog page redesign</div><div class="ds">Easier long-form reading</div></div><a class="vbtn" href="https://www.behance.net/gallery/252222975/Blog-Page-Redesign-UXUI-Case-Study" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Design Reviewer</div><div class="ds">Figma plugin, 3 AI models review</div></div><a class="vbtn" href="https://www.behance.net/gallery/255906623/AI-Design-Reviewer-Figma-Plugin-n8n" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Mini AI design assistant</div><div class="ds">Finds UI/UX issues, suggests fixes</div></div><a class="vbtn" href="https://www.behance.net/gallery/256506207/Mini-AI-Design-Assistant" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">Color Remains</div><div class="ds">A colour diary for designers</div></div><a class="vbtn" href="https://color-remains.vercel.app/" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<div class="wit nothumb"><div><div class="nm">My Desktop Drawer</div><div class="ds">A fun desktop experiment</div></div><a class="vbtn" href="https://www.behance.net/gallery/258358513/My-Desktop-Drawer-A-Fun-Desktop-Experiment" target="_blank" rel="noopener noreferrer">VIEW</a></div>'+
+        '<a class="vmore" href="'+B+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
       .then(function(){return typeP(a,intro||'Here’s his work. Swipe across to see everything.');})
       .then(function(){return block(a,html);});
