@@ -700,7 +700,8 @@ i.nv::after{background:#C0392B}
     },
     resume:function(a){
       return typeP(a,'Here is <b>Manikandan’s resume</b>. Tap to open it or download it.')
-      .then(function(){return block(a,'<div class="rfile"><span class="rpdf" aria-hidden="true">PDF</span><span class="rinfo"><b>Manikandan_Resume.pdf</b><small>PDF · 1 page · 1.6 MB</small></span><span class="rbtns"><a class="rbtn" href="/Manikandan_Resume.pdf" target="_blank" rel="noopener">Open</a><a class="rbtn fill" href="/Manikandan_Resume.pdf" download="Manikandan_Resume.pdf">Download</a></span></div>');});
+      .then(function(){return block(a,'<div class="rfile"><span class="rpdf" aria-hidden="true">PDF</span><span class="rinfo"><b>Manikandan_Resume.pdf</b><small>PDF · 1 page · 1.6 MB</small></span><span class="rbtns"><a class="rbtn" href="/Manikandan_Resume.pdf" target="_blank" rel="noopener">Open</a><a class="rbtn fill" href="/Manikandan_Resume.pdf" download="Manikandan_Resume.pdf">Download</a></span></div>');})
+      .then(function(){return block(a,memeCard({file:'/memes/resume-1.jpg',mood:'business'}));});
     },
     work:function(a,intro){
       var B=LINKS.behance, P=LINKS.portfolio;
@@ -742,8 +743,8 @@ i.nv::after{background:#C0392B}
         '</div></div><a class="vmore" href="'+B+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
       .then(function(){return typeP(a,intro||'Here’s his work. Swipe across to see everything.');})
-      .then(function(){return block(a,memeCard({file:'/memes/links-1.jpg',mood:'reading'}));})
-      .then(function(){return block(a,html);});
+      .then(function(){return block(a,html);})
+      .then(function(){return block(a,memeCard({file:'/memes/links-1.jpg',mood:'reading'}));});
     },
     other:function(a){return typeP(a,'You can ask about his current status or his work, or open his profile above.');}
   };
