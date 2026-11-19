@@ -120,7 +120,7 @@ const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'th
 async function askGroq(contents, spentMs) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return '';
-  const models = (process.env.GROQ_MODELS || 'llama-3.3-70b-versatile,openai/gpt-oss-120b,llama-3.1-8b-instant')
+  const models = (process.env.GROQ_MODELS || 'openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.1-8b-instant')
     .split(',').map(x => x.trim()).filter(Boolean);
   const messages = [{ role: 'system', content: PROFILE + '\nReply ONLY with a JSON object like {"reply": "...", "mood": "..."}.' }]
     .concat(contents.map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
@@ -221,10 +221,8 @@ module.exports = async function handler(req, res) {
     });
     const wait = ms => new Promise(res2 => setTimeout(() => res2(''), ms));
 
-    // 1) Gemini main model. If no answer within 4s, ask Groq in parallel; first answer wins.
-    const g1 = gemini(MODELS[0], 0, 9000);
-    let raw = await Promise.race([g1, wait(4000)]);
-    if (!raw) raw = await firstGood([g1, askGroq(contents, 0)]);
+    // ask Gemini and Groq at the same time; the first good answer wins
+    let raw = await firstGood([gemini(MODELS[0], 0, 9000), askGroq(contents, 0)]);
     // 2) Still nothing: try the other Gemini key and backup models quickly (max ~25s total)
     if (!raw) {
       outer:
