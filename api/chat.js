@@ -145,8 +145,8 @@ module.exports = async function handler(req, res) {
       if (mood === 'info' && !teaDone && !/tea/i.test(reply)) reply = reply.replace(/\s*$/, '') + ' Do you need tea? ☕';
       if (mood === 'info' && teaDone) reply = reply.replace(/\s*Do you need tea\?\s*☕?/gi, '').trim();
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
-      // tea cat shows only once per visit
-      const own = (mood === 'info' && teaDone) ? [] : MEMES.filter(m => m.mood === mood);
+      // first info answer: tea cat. Later info answers: the 'info-more' cats (glasses, thinking)
+      const own = MEMES.filter(m => m.mood === ((mood === 'info' && teaDone) ? 'info-more' : mood));
       if (own.length) meme = { file: own[Math.floor(Math.random() * own.length)].file, mood };
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
