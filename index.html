@@ -538,7 +538,7 @@ i.nv::after{background:#C0392B}
 
   <main class="main">
     <div class="top">
-      <div class="title" id="topTitle">New chat <svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="title" id="topTitle" hidden></div>
       
       <div class="right">
         <button class="share" id="restart" type="button" title="Start over"><svg class="i" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>Start over</button>
@@ -550,7 +550,6 @@ i.nv::after{background:#C0392B}
     <div class="scroll" id="scroll">
       <div class="hello" id="hello">
         <h1><svg class="burst" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#D97757"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg>Good to see you</h1>
-        <p>Press enter, or pick a section on the left.</p>
       </div>
       <div class="thread" id="thread" aria-live="polite"></div>
     </div>
@@ -571,8 +570,6 @@ i.nv::after{background:#C0392B}
               <div class="condemo">Demo only · not affiliated with Zomato or Blinkit</div>
               <div class="connote" id="connote" hidden>Answer the 2 questions first to unlock 🙂</div>
             </div></div>
-          <span class="mid">A concept by Manikandan. AI answers by Gemini.</span>
-          <div class="r"><span>Hiring agent <em>2030</em></span></div>
         </div>
       </div>
     </div>
@@ -767,7 +764,7 @@ i.nv::after{background:#C0392B}
 
   function startTurn(text){
     if(hello){hello.remove();hello=null;}
-    document.getElementById('topTitle').innerHTML='Best designer in 2030 '+CHEV;
+    
     document.getElementById('recTitle').textContent='Best designer in 2030';
     userMsg(text);
     var u=thread.lastElementChild; u.style.scrollMarginTop='16px';
@@ -1208,10 +1205,10 @@ i.nv::after{background:#C0392B}
     if(busy)return;
     thread.innerHTML='';done={};secEl={};unlocked=false;input.setAttribute('readonly','');
     var h=el('div','hello');h.id='hello';
-    h.innerHTML='<h1><svg class="burst" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#D97757"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg>Good to see you</h1><p>Press enter, or pick a section on the left.</p>';
+    h.innerHTML='<h1><svg class="burst" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#D97757"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg>Good to see you</h1>';
     scroll.insertBefore(h,thread);hello=h;
     input.value='';refreshComposer();setActive(null);
-    document.getElementById('topTitle').innerHTML='New chat '+CHEV;
+    
     document.getElementById('recTitle').textContent='New chat';
     input.focus();
   }
