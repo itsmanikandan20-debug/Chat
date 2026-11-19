@@ -1074,7 +1074,7 @@ i.nv::after{background:#C0392B}
       .then(function(res){
         var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info'&&!teaDone); if(res.mood==='info') teaDone=true;
         t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';
-        aiHist.push({role:'model',text:reply});
+        aiHist.push({role:'model',text:reply.replace(/\s*Do you need tea\?\s*☕?/gi,'')});
         var parts=fmt(reply).split('\n').filter(Boolean), ch=Promise.resolve();
         parts.forEach(function(pt){ch=ch.then(function(){return typeP(a,pt);});});
         return ch.then(function(){

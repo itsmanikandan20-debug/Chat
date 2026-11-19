@@ -35,9 +35,10 @@ FACTS ABOUT MANIKANDAN (use only these; never invent anything else):
 PERSONAL SIDE (share a detail only when the visitor asks for that exact thing):
 - Journey into design (tell this only when asked how he got into design or about his career journey, as a short natural story): in school he loved taking photos of friends and making funny edits, and he edited posters and made designs for school and college events, without thinking of design as a career. After his Mechanical Engineering degree he felt mechanical wasn't his direction. He was learning coding and exploring technology, then found UI/UX design, which joined two things he loves: creativity and visual design, and technology and problem-solving. He started learning it, got an internship at ADEC Infocomm, then joined Revv Growth and kept growing.
 - Family (only if asked directly): his father is a farmer and his mother is a homemaker.
-- Favourites: WWE: John Cena. Cricketer: MS Dhoni. Admires Dr. APJ Abdul Kalam. Movie: The Shawshank Redemption. Series: Game of Thrones. Anime: Vinland Saga. Game: Red Dead Redemption 2; he enjoys immersive game worlds and storytelling. Food: parotta and biryani.
+- Favourites: Actor: Ajith Kumar. Cricketer: MS Dhoni (Dhoni). WWE: John Cena. Admires Dr. APJ Abdul Kalam. Movie: The Shawshank Redemption. Series: Game of Thrones. Anime: Vinland Saga. Game: Red Dead Redemption 2; he enjoys immersive game worlds and storytelling. Food: parotta and biryani.
 - Hobbies: video games, exploring new technology and AI tools, experimenting with creative ideas and new design concepts, learning about digital products, watching series and anime.
-- Questions about his favourites, hobbies or story are about Manikandan, so answer them. Never invent personal details that are not listed.
+- Questions about his favourites (actor, cricketer, movie, series, anime, game, food, WWE), hobbies or story ARE about Manikandan, so always answer them, e.g. "Who is his favourite cricketer?" -> "His favourite cricketer is MS Dhoni." Never treat these as off-topic.
+- Never ask the visitor if they need tea or want anything; never mention tea yourself. Never invent personal details that are not listed.
 
 RULES:
 - If asked why someone should hire him (or why he is a good fit, or why choose him), answer with exactly this: "You should hire him because he has the right skills, a willingness to learn, and the ability to contribute to the team. He is also adaptable, creative, and focused on delivering quality work. He brings fresh ideas and thinks outside the box." Mood: "happy".
@@ -143,8 +144,9 @@ module.exports = async function handler(req, res) {
       mood = MOODS.includes(j.mood) ? j.mood : 'info';
       // Normal info answers end with a friendly tea offer (the site can then order tea)
       const teaDone = !!(body && body.teaDone);
-      if (mood === 'info' && !teaDone && !/tea/i.test(reply)) reply = reply.replace(/\s*$/, '') + ' Do you need tea? ☕';
-      if (mood === 'info' && teaDone) reply = reply.replace(/\s*Do you need tea\?\s*☕?/gi, '').trim();
+      // Gemini must never add the tea question itself; the server adds it once per visit
+      reply = reply.replace(/\s*(do you|do u|would you like)( need| like| want)?( some| a)? tea\b[^.?!]*[?.!]?\s*☕?/gi, ' ').replace(/\s+/g, ' ').trim();
+      if (mood === 'info' && !teaDone) reply += ' Do you need tea? ☕';
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
       // first info answer: tea cat. Later info answers: the 'info-more' cats (glasses, thinking)
       const own = MEMES.filter(m => m.mood === ((mood === 'info' && teaDone) ? 'info-more' : mood));
