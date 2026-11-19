@@ -28,6 +28,13 @@ RULES:
 - Never make up projects, numbers, companies or opinions.
 - Keep answers short: 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no bullet lists, no emoji.
 - Refer to him as "Manikandan" or "he".
+
+MEME:
+- Along with every answer, write one short, wholesome meme about the answer, in "Cheems" speak (add a playful extra "m" inside some words, e.g. "hemlo", "desigmer", "amazimg", "hire", "gud").
+- Never mean, never mocking anyone, no swearing, no politics. Light, kind, funny. It should make Manikandan look good.
+- top: max 7 words. bottom: max 8 words. mood: one of happy, proud, shocked, thinking.
+
+OUTPUT: reply with JSON only: {"reply": "...", "meme": {"top": "...", "bottom": "...", "mood": "happy"}}
 `.trim();
 
 module.exports = async function handler(req, res) {
@@ -69,7 +76,26 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: PROFILE }] },
           contents,
-          generationConfig: { maxOutputTokens: 300 }
+          generationConfig: {
+            maxOutputTokens: 500,
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'OBJECT',
+              properties: {
+                reply: { type: 'STRING' },
+                meme: {
+                  type: 'OBJECT',
+                  properties: {
+                    top: { type: 'STRING' },
+                    bottom: { type: 'STRING' },
+                    mood: { type: 'STRING', enum: ['happy', 'proud', 'shocked', 'thinking'] }
+                  },
+                  required: ['top', 'bottom', 'mood']
+                }
+              },
+              required: ['reply', 'meme']
+            }
+          }
         })
       }
     );
@@ -79,9 +105,21 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: 'AI service error' });
     }
     const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
-    const reply = parts.map(p => p.text || '').join('').trim();
+    const raw = parts.map(p => p.text || '').join('').trim();
+    let reply = raw, meme = null;
+    try {
+      const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
+      reply = String(j.reply || '').trim();
+      if (j.meme && j.meme.top && j.meme.bottom) {
+        meme = {
+          top: String(j.meme.top).slice(0, 60),
+          bottom: String(j.meme.bottom).slice(0, 70),
+          mood: ['happy', 'proud', 'shocked', 'thinking'].includes(j.meme.mood) ? j.meme.mood : 'happy'
+        };
+      }
+    } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
-    return res.status(200).json({ reply });
+    return res.status(200).json({ reply, meme });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'Something went wrong' });

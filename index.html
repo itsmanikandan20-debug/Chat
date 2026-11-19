@@ -6,7 +6,7 @@
 <title>Best Designer in 2030 · Manikandan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Anton&display=swap" rel="stylesheet">
 <style>
 /* Layout idea: a working AI chat app in a clean white chat style. The visitor sends a question, the assistant types its answer live, and a numbered question panel above the reply box leads to an approval step. Single light theme on purpose, to match the reference. */
 :root{
@@ -440,6 +440,19 @@ i.nv::after{background:#C0392B}
 .wb{padding:12px;border-radius:12px;border:1px solid var(--rule);background:#fff;font-weight:600;font-size:15.5px}
 .wb.primary{background:var(--ink);border-color:var(--ink);color:#fff}
 .wb:hover{border-color:var(--ink)}
+
+
+/* Meme card (original cat mascot, Cheems-style captions) */
+.meme{width:300px;max-width:100%;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--panel)}
+.mimg{position:relative;aspect-ratio:1/1;background:radial-gradient(circle at 50% 60%,#FFF4E6,#F6DDBF)}
+.mimg svg{position:absolute;left:50%;top:54%;width:62%;transform:translate(-50%,-50%)}
+.mcap{position:absolute;left:8px;right:8px;text-align:center;font-family:"Anton",Impact,"Arial Black",sans-serif;font-size:24px;line-height:1.08;color:#fff;text-transform:uppercase;letter-spacing:.01em;-webkit-text-stroke:1.5px #000;paint-order:stroke fill;text-shadow:0 2px 0 #000,2px 0 0 #000,-2px 0 0 #000,0 -2px 0 #000;word-wrap:break-word}
+.mcap.t{top:10px}.mcap.b{bottom:12px}
+.mbar{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.cpy{border:1px solid var(--rule);background:var(--panel);border-radius:8px;padding:5px 10px;font-size:13px;font-weight:500}
+.cpy:hover{border-color:var(--ink)}
+.rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
+.rcopy:hover{color:var(--ink)}
 
 @media (max-width:860px){.app{grid-template-columns:1fr}.side{display:none}}
 @media (max-width:560px){
@@ -959,19 +972,65 @@ i.nv::after{background:#C0392B}
       .replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1">$1</a>')
       .replace(/\n{2,}/g,'\n').trim();
   }
+
+  function copyText(txt,label,orig){
+    function ok(){label.textContent='Copied ✓';setTimeout(function(){label.textContent=orig;},1500);}
+    try{navigator.clipboard.writeText(txt).then(ok,function(){fallback();});}catch(e){fallback();}
+    function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}ta.remove();}
+  }
+  function catFace(mood){
+    var eyes={
+      happy:'<path d="M42 62 q7 -8 14 0 M74 62 q7 -8 14 0" stroke="#2A1E15" stroke-width="4" fill="none" stroke-linecap="round"/>',
+      proud:'<path d="M41 60 h15 M74 60 h15" stroke="#2A1E15" stroke-width="4" stroke-linecap="round"/><path d="M40 54 l16 3 M90 54 l-16 3" stroke="#5A3A22" stroke-width="3" stroke-linecap="round"/>',
+      shocked:'<circle cx="49" cy="60" r="8" fill="#fff" stroke="#2A1E15" stroke-width="2.5"/><circle cx="81" cy="60" r="8" fill="#fff" stroke="#2A1E15" stroke-width="2.5"/><circle cx="49" cy="60" r="3.5" fill="#2A1E15"/><circle cx="81" cy="60" r="3.5" fill="#2A1E15"/>',
+      thinking:'<ellipse cx="49" cy="60" rx="5" ry="6.5" fill="#2A1E15"/><ellipse cx="81" cy="60" rx="5" ry="6.5" fill="#2A1E15"/><circle cx="51" cy="57" r="1.8" fill="#fff"/><circle cx="83" cy="57" r="1.8" fill="#fff"/><path d="M42 49 q7 -5 14 -1" stroke="#5A3A22" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    }[mood]||'';
+    var mouth={
+      happy:'<path d="M58 80 q7 9 14 0" stroke="#5A3A22" stroke-width="3" fill="#E0706A" stroke-linecap="round"/>',
+      proud:'<path d="M57 79 q8 6 16 -2" stroke="#5A3A22" stroke-width="3" fill="none" stroke-linecap="round"/>',
+      shocked:'<ellipse cx="65" cy="84" rx="6" ry="8" fill="#7A2E2A" stroke="#5A3A22" stroke-width="2.5"/>',
+      thinking:'<path d="M58 82 h12" stroke="#5A3A22" stroke-width="3" stroke-linecap="round"/>'
+    }[mood]||'';
+    var extra= mood==='thinking' ? '<ellipse cx="100" cy="104" rx="11" ry="9" fill="url(#mf)" stroke="#5A3A22" stroke-width="2.5"/>' :
+               mood==='proud' ? '<path d="M22 22 l4 8 l9 1 l-7 6 l2 9 l-8 -5 l-8 5 l2 -9 l-7 -6 l9 -1z" fill="#F2C230" stroke="#A9781A" stroke-width="1.5"/>' : '';
+    return '<svg viewBox="0 0 130 120" aria-hidden="true"><defs><linearGradient id="mf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs>'+
+      '<path d="M30 46 L26 10 L54 30 Z" fill="url(#mf)" stroke="#5A3A22" stroke-width="3" stroke-linejoin="round"/><path d="M33 40 L31 20 L47 31 Z" fill="#F4B3B0"/>'+
+      '<path d="M100 46 L104 10 L76 30 Z" fill="url(#mf)" stroke="#5A3A22" stroke-width="3" stroke-linejoin="round"/><path d="M97 40 L99 20 L83 31 Z" fill="#F4B3B0"/>'+
+      '<ellipse cx="65" cy="70" rx="48" ry="42" fill="url(#mf)" stroke="#5A3A22" stroke-width="3"/>'+
+      '<path d="M58 30 q3 8 0 13 M65 28 v16 M72 30 q-3 8 0 13" stroke="#C86F33" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+      '<ellipse cx="65" cy="86" rx="20" ry="13" fill="#FBE3CB"/>'+eyes+
+      '<path d="M61 72 h8 l-4 5z" fill="#E0706A"/>'+mouth+
+      '<ellipse cx="34" cy="78" rx="7" ry="4" fill="#F19C8E" opacity=".5"/><ellipse cx="96" cy="78" rx="7" ry="4" fill="#F19C8E" opacity=".5"/>'+
+      '<path d="M8 74 l20 2 M9 83 l19 -2 M122 74 l-20 2 M121 83 l-19 -2" stroke="#5A3A22" stroke-width="1.8" stroke-linecap="round"/>'+extra+'</svg>';
+  }
+  function memeCard(m){
+    return '<div class="meme"><div class="mimg"><div class="mcap t">'+esc(m.top)+'</div>'+catFace(m.mood)+'<div class="mcap b">'+esc(m.bottom)+'</div></div>'+
+      '<div class="mbar"><span>Meme by the house cat</span><button type="button" class="cpy"><span>Copy meme</span></button></div></div>';
+  }
+  function wireMeme(a,m){
+    var cards=a.querySelectorAll('.meme'), c=cards[cards.length-1];
+    var b=c.querySelector('.cpy');
+    b.addEventListener('click',function(){copyText(m.top+'\n'+m.bottom,b.querySelector('span'),'Copy meme');});
+  }
   function askAI(a,text){
     var t=el('div','tool fade','<span class="l"><span class="ic">G</span><span>Used Gemini · <code>ask_about_manikandan</code></span></span><span class="spin"></span>');
     a.appendChild(t);down();
     aiHist.push({role:'user',text:text});
     var hist=aiHist.slice(-10);
     return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})})
-      .then(function(r){return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j.reply;});})
-      .then(function(reply){
+      .then(function(r){return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
+      .then(function(res){
+        var reply=res.reply, meme=res.meme;
         t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';
         aiHist.push({role:'model',text:reply});
         var parts=fmt(reply).split('\n').filter(Boolean), ch=Promise.resolve();
         parts.forEach(function(pt){ch=ch.then(function(){return typeP(a,pt);});});
-        return ch;
+        return ch.then(function(){
+          var c=el('button','rcopy','<svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span>Copy answer</span>');
+          c.type='button'; c.addEventListener('click',function(){copyText(reply,c.querySelector('span'),'Copy answer');});
+          a.appendChild(c);
+          if(meme) return block(a,memeCard(meme)).then(function(){wireMeme(a,meme);});
+        });
       })
       .catch(function(){
         aiHist.pop();
