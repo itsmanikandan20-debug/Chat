@@ -291,7 +291,7 @@ svg.i{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-
 .nocat.up svg{transform:translateY(0)}
 .nocat .finger{transform-origin:96px 62px;animation:wag .45s ease-in-out infinite alternate}
 @keyframes wag{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
-.nobub{position:absolute;z-index:3;right:250px;top:-52px;background:var(--ink);color:#fff;font-size:13.5px;padding:6px 10px;border-radius:10px;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;white-space:nowrap}
+.nobub{white-space:nowrap;position:absolute;z-index:3;right:250px;top:-52px;background:var(--ink);color:#fff;font-size:13.5px;padding:6px 10px;border-radius:10px;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;white-space:nowrap}
 .nobub.up{opacity:1;transform:none}
 .nobub::after{content:"";position:absolute;right:-6px;top:50%;margin-top:-5px;border:5px solid transparent;border-left-color:var(--ink)}
 @media (max-width:560px){.nocat{right:56px}.nobub{right:auto;left:0;top:-56px}.nobub::after{display:none}}
@@ -492,6 +492,7 @@ i.nv::after{background:#C0392B}
 .condemo{font-size:11px;color:var(--muted);padding:4px 8px 2px;border-top:1px solid var(--rule);margin-top:4px}
 .connote{font-size:12.5px;color:var(--muted);padding:6px 8px}
 .a p.bl{margin-top:4px;margin-bottom:4px;padding-left:18px;text-indent:-14px}
+.wbox h2{margin-bottom:18px}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
 .rcopy:hover{color:var(--ink)}
 
@@ -511,7 +512,7 @@ i.nv::after{background:#C0392B}
 </head>
 <body>
 <div class="modesw"><span id="swlab">Chat on</span><button class="sw" id="sw" type="button" role="switch" aria-checked="true" aria-label="Turn chat on or off"></button></div><div class="plain" id="plain"><div class="pl"><h1>Manikandan</h1><p>UI/UX Designer and Graphic Designer · Tamil Nadu, India</p><a class="row" href="https://mani20021.github.io/Portfolio/">Portfolio <span>mani20021.github.io →</span></a><a class="row" href="https://www.behance.net/manikandan276">Behance <span>Case studies →</span></a><a class="row" id="resumeLink" href="https://mani20021.github.io/Portfolio/">Resume <span>View or download →</span></a></div></div>
-<div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle"><div class="wbox"><div class="wav" aria-hidden="true">MK</div><h2 id="wTitle">Have you been here before?</h2><p>New visitors start with two quick questions. If you’ve already seen them, jump straight to asking anything about Manikandan.</p><div class="wbtns"><button type="button" class="wb primary" id="wNew">I’m new here</button><button type="button" class="wb" id="wBack">I’ve visited before</button></div></div></div>
+<div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle"><div class="wbox"><div class="wav" aria-hidden="true">MK</div><h2 id="wTitle">Have you been here before?</h2><div class="wbtns"><button type="button" class="wb primary" id="wNew">I’m new here</button><button type="button" class="wb" id="wBack">I’ve visited before</button></div></div></div>
 <div class="app">
   <aside class="side" aria-label="Navigation">
     <div class="side-in">
@@ -526,17 +527,12 @@ i.nv::after{background:#C0392B}
       <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Scheduled</div>
       <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="9" r="1"/><circle cx="15.5" cy="13" r="1"/></svg>Design</div>
       <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6h6v2"/></svg>Customize</div>
-      <div class="lab">This chat</div><nav class="sidetabs" aria-label="Sections"><button class="tab stab" type="button" data-k="search"><span class="d"></span>Top pick</button><button class="tab stab" type="button" data-k="status"><span class="d"></span>Current status</button><button class="tab stab" type="button" data-k="work"><span class="d"></span>His work</button></nav>
-      <div class="lab">Pinned ⌄</div>
-      <div class="rec dead"><span style="display:inline-flex;gap:12px;align-items:center"><svg class="i" viewBox="0 0 24 24"><path d="M5 8h14v11H5zM7 5h10"/></svg>Hiring 2030</span></div>
-      <div class="rec sub dead">UX shortlist</div>
-      <div class="rec sub dim dead">View all</div>
       <div class="lab">Recents ⌄</div>
       <div class="rec on" id="recTitle">New chat</div>
       <div class="rec dead">Agentic commerce in India</div>
       <div class="rec dead">Ramayana tickets, Tenkasi</div>
     </div>
-    <div class="who"><span class="av">CM</span><div>Cognizant Moment <small>· Hiring</small></div></div>
+    <div class="who"><span class="av">MK</span><div>Manikandan <small>· AI assistant</small></div></div>
   </aside>
 
   <main class="main">
@@ -559,7 +555,7 @@ i.nv::after{background:#C0392B}
 
     <div class="comp">
       <div class="wrapc">
-        <div class="nobub" id="nobub" aria-live="polite">Just press enter</div><div class="nocat" id="nocat" aria-hidden="true"><svg viewBox="0 0 120 70"><defs><linearGradient id="fur2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs><path d="M30 40 L28 12 L50 30 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M32 34 L31.5 20 L44 30 Z" fill="#F4B3B0"/><path d="M90 40 L92 12 L70 30 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M88 34 L88.5 20 L76 30 Z" fill="#F4B3B0"/><ellipse cx="60" cy="56" rx="36" ry="30" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2"/><path d="M54 28 q2 6 0 10 M60 26 v12 M66 28 q-2 6 0 10" stroke="#C86F33" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M42 50 q5 -4 10 0 M68 50 q5 -4 10 0" stroke="#2A1E15" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M42 44 l10 3 M78 44 l-10 3" stroke="#5A3A22" stroke-width="2" stroke-linecap="round"/><path d="M56.5 58 h7 l-3.5 4z" fill="#E0706A"/><path d="M55 66 q5 -3 10 0" stroke="#5A3A22" stroke-width="1.8" fill="none" stroke-linecap="round"/><g class="finger"><path d="M90 70 C88 62 89 56 92 54 L93 38 C93 34 98 34 98 38 L98 52 C101 51 104 53 104 57 L104 70 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="1.8" stroke-linejoin="round"/></g></svg></div><form class="box" id="form">
+        <div class="nobub" id="nobub" aria-live="polite">Chat unlocks after 2 questions 🙂 Just press enter</div><div class="nocat" id="nocat" aria-hidden="true"><svg viewBox="0 0 120 70"><defs><linearGradient id="fur2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5B676"/><stop offset="1" stop-color="#E3884A"/></linearGradient></defs><path d="M30 40 L28 12 L50 30 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M32 34 L31.5 20 L44 30 Z" fill="#F4B3B0"/><path d="M90 40 L92 12 L70 30 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2" stroke-linejoin="round"/><path d="M88 34 L88.5 20 L76 30 Z" fill="#F4B3B0"/><ellipse cx="60" cy="56" rx="36" ry="30" fill="url(#fur2)" stroke="#5A3A22" stroke-width="2"/><path d="M54 28 q2 6 0 10 M60 26 v12 M66 28 q-2 6 0 10" stroke="#C86F33" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M42 50 q5 -4 10 0 M68 50 q5 -4 10 0" stroke="#2A1E15" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M42 44 l10 3 M78 44 l-10 3" stroke="#5A3A22" stroke-width="2" stroke-linecap="round"/><path d="M56.5 58 h7 l-3.5 4z" fill="#E0706A"/><path d="M55 66 q5 -3 10 0" stroke="#5A3A22" stroke-width="1.8" fill="none" stroke-linecap="round"/><g class="finger"><path d="M90 70 C88 62 89 56 92 54 L93 38 C93 34 98 34 98 38 L98 52 C101 51 104 53 104 57 L104 70 Z" fill="url(#fur2)" stroke="#5A3A22" stroke-width="1.8" stroke-linejoin="round"/></g></svg></div><form class="box" id="form">
           <label for="q" style="position:absolute;left:-9999px">Message</label>
           <input id="q" autocomplete="off" readonly placeholder="Who will be the best designer in 2030?">
           <button class="send go" id="send" type="submit" aria-label="Send"><svg class="i" viewBox="0 0 24 24"><path d="M19 6v6a3 3 0 01-3 3H6M10 11l-4 4 4 4"/></svg></button>
@@ -1231,7 +1227,7 @@ i.nv::after{background:#C0392B}
   function no(){
     if(reduce){nobub.classList.add('up');clearTimeout(ncT);ncT=setTimeout(function(){nobub.classList.remove('up');},1800);return;}
     nocat.classList.add('up');nobub.classList.add('up');
-    clearTimeout(ncT);ncT=setTimeout(function(){nocat.classList.remove('up');nobub.classList.remove('up');},2000);
+    clearTimeout(ncT);ncT=setTimeout(function(){nocat.classList.remove("up");nobub.classList.remove("up");},3000);
   }
   input.addEventListener('keydown',function(e){
     if(unlocked)return;
