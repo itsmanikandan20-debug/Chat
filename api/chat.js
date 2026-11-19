@@ -126,9 +126,9 @@ async function askGroq(contents, spentMs) {
     .concat(contents.map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
   const started = Date.now();
   for (const m of models) {
-    if (spentMs + (Date.now() - started) > 27000) break;
+    if (spentMs + (Date.now() - started) > 15000) break;
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 8000);
+    const timer = setTimeout(() => ctrl.abort(), 7000);
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST', signal: ctrl.signal,
@@ -200,42 +200,44 @@ module.exports = async function handler(req, res) {
           }
         })
       };
-    let r = null;
     const started = Date.now();
-    // try each model with the main key, then the backup key; stop after ~25s total
-    outer:
-    for (const m of MODELS) {
-      for (let k = 0; k < KEYS.length; k++) {
-        if (Date.now() - started > 16000) break outer;
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 7000);
-        try {
-          r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`,
-            { ...reqInit, headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
-        } catch (e) {
-          clearTimeout(timer);
-          console.error('Gemini timed out, trying next:', m, 'key', k + 1);
-          r = null;
-          continue;
-        }
+    // one Gemini attempt: returns the text, or '' if busy / failed / too slow
+    async function gemini(model, k, ms) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+          { ...reqInit, headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
         clearTimeout(timer);
-        if (r.ok) break outer;
-        if (![429, 500, 503, 404, 403].includes(r.status)) break outer;
-        console.error('Gemini busy/unavailable, trying next:', m, 'key', k + 1, r.status);
-        if (r.status === 404) break; // model missing: same for every key, go to next model
+        if (!r.ok) { console.error('Gemini failed:', model, 'key', k + 1, r.status); return ''; }
+        const data = await r.json();
+        const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+        return parts.map(p => p.text || '').join('').trim();
+      } catch (e) { clearTimeout(timer); console.error('Gemini too slow:', model, 'key', k + 1); return ''; }
+    }
+    const firstGood = list => new Promise(resolve => {
+      let left = list.length;
+      list.forEach(p => p.then(v => { if (v) resolve(v); else if (--left === 0) resolve(''); }));
+    });
+    const wait = ms => new Promise(res2 => setTimeout(() => res2(''), ms));
+
+    // 1) Gemini main model. If no answer within 4s, ask Groq in parallel; first answer wins.
+    const g1 = gemini(MODELS[0], 0, 9000);
+    let raw = await Promise.race([g1, wait(4000)]);
+    if (!raw) raw = await firstGood([g1, askGroq(contents, 0)]);
+    // 2) Still nothing: try the other Gemini key and backup models quickly (max ~25s total)
+    if (!raw) {
+      outer:
+      for (const m of MODELS) {
+        for (let k = 0; k < KEYS.length; k++) {
+          if (m === MODELS[0] && k === 0) continue;
+          if (Date.now() - started > 22000) break outer;
+          raw = await gemini(m, k, 5000);
+          if (raw) break outer;
+        }
       }
     }
-    let raw = '';
-    if (r && r.ok) {
-      const data = await r.json();
-      const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
-      raw = parts.map(p => p.text || '').join('').trim();
-    } else {
-      if (r) { try { console.error('Gemini failed', r.status, (await r.text()).slice(0, 300)); } catch (e) {} }
-      // last backup: Groq (same profile and rules, asked to reply in the same JSON)
-      raw = await askGroq(contents, Date.now() - started);
-      if (!raw) return res.status(502).json({ error: 'AI service error' });
-    }
+    if (!raw) return res.status(502).json({ error: 'AI service error' });
     let reply = raw, meme = null, mood = null;
     try {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
