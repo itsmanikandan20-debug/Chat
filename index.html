@@ -438,6 +438,7 @@ i.nv::after{background:#C0392B}
 .ditem:disabled{cursor:default}
 .ditem.nom{animation:nom .65s ease-in-out}
 @keyframes nom{0%{transform:scale(1)}20%{transform:scale(.9) rotate(-8deg)}40%{transform:scale(.8) rotate(8deg)}60%{transform:scale(.62) rotate(-6deg)}80%{transform:scale(.4)}100%{transform:scale(.15);opacity:.3}}
+.ditem.gone{opacity:0;transform:scale(.4);transition:opacity .35s,transform .35s;pointer-events:none}
 .ditem.drained{filter:grayscale(1);opacity:.35;transform:scale(.92)}
 .cashb{animation:wig 1.2s ease-in-out infinite}
 @keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
@@ -1039,12 +1040,6 @@ i.nv::after{background:#C0392B}
     var grocery=it.sec.src==='Blinkit'&&!drink; // milk etc. can be drunk
     function handOver(d){
       if(gap.parentNode)gap.remove();
-      if(grocery){
-        // groceries are just delivered: no eating, no plate
-        var ge=''; for(var gi=0;gi<Math.min(q,5);gi++) ge+='<span class="ditem gitem" aria-hidden="true">'+it.e+'</span>';
-        d.innerHTML='<div class="delivered"><span class="dem">'+ge+'</span><span class="dcap">'+(cash?'Paid ₹'+cash+' in cash. ':'')+'Delivered from '+S.n+' 🧺 Enjoy!</span></div>';
-        down(); return;
-      }
       var emo=''; for(var i=0;i<Math.min(q,5);i++) emo+='<button type="button" class="ditem" aria-label="'+(drink?'Drink':'Eat')+' '+it.n+'">'+it.e+'</button>';
       d.innerHTML='<div class="delivered"><span class="dem">'+emo+'</span><span class="dcap">'+(cash?'Paid ₹'+cash+' in cash. ':'')+'Delivered from '+S.n+'. Tap to '+(drink?'drink':'eat')+'!</span></div>';
       down();
@@ -1054,8 +1049,9 @@ i.nv::after{background:#C0392B}
         setTimeout(function(){
           b.classList.remove('nom');
           if(drink){ b.classList.add('drained'); b.setAttribute('aria-label','Empty cup'); }
+          else if(grocery){ b.classList.add('gone'); b.setAttribute('aria-label','Eaten'); }
           else { b.textContent='🍽️'; b.classList.add('empty'); b.setAttribute('aria-label','Empty plate'); }
-          left--; cap.textContent= left>0 ? 'Yum! '+left+' more to go.' : (drink?'All done! Only the empty cup is left 😋':'All done! Only the plate is left 😋');
+          left--; cap.textContent= left>0 ? 'Yum! '+left+' more to go.' : (drink?'All done! Only the empty cup is left 😋':grocery?'All done! Finished it all 😋':'All done! Only the plate is left 😋');
         }, reduce?0:650);
       });});
     }
