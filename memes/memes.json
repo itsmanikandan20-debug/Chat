@@ -203,5 +203,10 @@
     "id": "sorry-2",
     "mood": "sorry",
     "file": "/memes/sorry-2.jpg"
+  },
+  {
+    "id": "thanks-1",
+    "mood": "thanks",
+    "file": "/memes/thanks-1.jpg"
   }
 ]
