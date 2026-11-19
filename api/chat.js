@@ -37,7 +37,8 @@ MOOD (always required):
   - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
   - "wow": something impressive or surprising (Figma plugins, hackathon, career switch from mechanical, agentic commerce testing).
   - "thinking": a tricky, deep or "why/how" question that needs thought.
-  - "okay": the user says no, not hiring, not interested, maybe later, says something rude or insulting about Manikandan, or other disappointing news. You accept it calmly and kindly.
+  - "okay": the user says no, not hiring, not interested, maybe later, or other disappointing news. You accept it calmly and kindly.
+  - "sad": the user is rude, insults Manikandan, or says he is bad, useless or knows nothing.
   - "sorry": you don't have that information, or the question is not about Manikandan.
   - "hello": greetings, thanks, goodbyes, small talk.
 - "happy" is ONLY for a positive question or positive answer. Never use "happy" or "wow" when the user is negative, rude or insulting.
@@ -46,7 +47,7 @@ MOOD (always required):
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sorry', 'hello'];
+const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sad', 'sorry', 'hello'];
 
 // What to search on GIPHY for each mood (cats only, never angry)
 const GIPHY_Q = {
@@ -54,6 +55,7 @@ const GIPHY_Q = {
   wow: 'surprised cat',
   thinking: 'cat thinking',
   okay: 'sad cat thumbs up',
+  sad: 'crying cat',
   sorry: 'sad kitten',
   hello: 'cat waving'
 };
