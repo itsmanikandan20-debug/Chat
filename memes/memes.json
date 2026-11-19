@@ -83,5 +83,15 @@
     "id": "hire-2",
     "mood": "hire",
     "file": "/memes/hire-2.jpg"
+  },
+  {
+    "id": "wow-1",
+    "mood": "wow",
+    "file": "/memes/wow-1.jpg"
+  },
+  {
+    "id": "wow-2",
+    "mood": "wow",
+    "file": "/memes/wow-2.jpg"
   }
 ]
