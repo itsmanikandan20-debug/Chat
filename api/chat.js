@@ -54,6 +54,7 @@ RULES:
 
 MOOD (always required):
 - After writing your reply, read the user's question and your reply, and pick the ONE mood that best matches the feeling of your reply:
+  - "sideeye": nosy or personal questions: his height, weight, looks, age, marks, CGPA, school scores, relationship or marriage, or poking at his salary. Use this even if you know the answer (like his 10th marks) and even if you don't. Answer in a light, playful way. This beats "info" and "thinking".
   - "info": a normal, plain answer that just gives information about him (experience, skills, tools, education, location, projects, salary, notice period, work mode, favourites). This is the most common mood.
   - "happy": the user says something nice or positive about him, or the answer is good news that makes him look great.
   - "hire": the user says they will hire him, want to interview him, will call him, will share his profile, like him for a role, or anything that moves him closer to a job. Thank them warmly and say he would love to connect (his email is itsmanikandan20@gmail.com).
@@ -71,7 +72,7 @@ MOOD (always required):
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['info', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
+const MOODS = ['info', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {

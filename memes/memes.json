@@ -148,5 +148,20 @@
     "id": "info-tea",
     "mood": "info",
     "file": "/memes/info-tea.jpg"
+  },
+  {
+    "id": "sideeye-1",
+    "mood": "sideeye",
+    "file": "/memes/sideeye-1.jpg"
+  },
+  {
+    "id": "sideeye-2",
+    "mood": "sideeye",
+    "file": "/memes/sideeye-2.jpg"
+  },
+  {
+    "id": "sideeye-3",
+    "mood": "sideeye",
+    "file": "/memes/sideeye-3.jpg"
   }
 ]
