@@ -36,8 +36,12 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Use POST' });
   }
 
-  const allowed = process.env.ALLOWED_ORIGIN;
-  if (allowed && req.headers.origin && req.headers.origin !== allowed) {
+  // Only answer requests coming from Manikandan's own site, so others can't use up the key
+  const allowed = (process.env.ALLOWED_ORIGIN || 'https://manikandan-ux-five.vercel.app')
+    .split(',').map(s => s.trim()).filter(Boolean);
+  const origin = req.headers.origin || '';
+  const isPreview = /^https:\/\/manikandan-ux-[a-z0-9-]+\.vercel\.app$/.test(origin);
+  if (!allowed.includes(origin) && !isPreview) {
     return res.status(403).json({ error: 'Not allowed' });
   }
 
