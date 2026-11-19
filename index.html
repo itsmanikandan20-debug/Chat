@@ -742,6 +742,7 @@ i.nv::after{background:#C0392B}
         '</div></div><a class="vmore" href="'+B+'" target="_blank" rel="noopener noreferrer">View more</a></div>';
       return tool(a,'P','Scanned portfolio','mani20021.github.io')
       .then(function(){return typeP(a,intro||'Here’s his work. Swipe across to see everything.');})
+      .then(function(){return block(a,memeCard({file:'/memes/links-1.jpg',mood:'reading'}));})
       .then(function(){return block(a,html);});
     },
     other:function(a){return typeP(a,'You can ask about his current status or his work, or open his profile above.');}
