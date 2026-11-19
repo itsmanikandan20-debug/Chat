@@ -1211,7 +1211,7 @@ i.nv::after{background:#C0392B}
     if(/\b(no|not|dont|don't|do not|nope|nah|never|no need|cancel|stop|skip|later)\b/.test(low) && (wasTea || findItem(t) || /(tea|coffee|food|order|eat|drink|hungry)/.test(low))){
       if(busy)return; busy=true; send.disabled=true; startTurn(t);
       var na=el('div','a'); thread.appendChild(na);
-      typeP(na,(wasTea||/tea/.test(low))?'No problem, no tea 🙂 Ask me anything about Manikandan.':'No problem, I won’t order anything 🙂 Ask me anything about Manikandan.').then(function(){busy=false;send.disabled=false;});
+      typeP(na,(wasTea||/tea/.test(low))?'No problem, no tea 🙂 Ask me anything about Manikandan.':'No problem, I won’t order anything 🙂 Ask me anything about Manikandan.').then(function(){return block(na,memeCard({file:'/memes/ok-'+(1+Math.floor(Math.random()*4))+'.jpg',mood:'ok'}));}).then(function(){busy=false;send.disabled=false;});
       return;
     }
     if(/(best designer|2030|top pick)/.test(low)) return ask(t,'search');
