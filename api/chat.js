@@ -114,6 +114,35 @@ OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 
 const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
 
+// Backup AI: Groq (OpenAI-style API). Uses GROQ_API_KEY; tries a few models, skips retired ones.
+async function askGroq(contents, spentMs) {
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return '';
+  const models = (process.env.GROQ_MODELS || 'llama-3.3-70b-versatile,openai/gpt-oss-120b,llama-3.1-8b-instant')
+    .split(',').map(x => x.trim()).filter(Boolean);
+  const messages = [{ role: 'system', content: PROFILE + '\nReply ONLY with a JSON object like {"reply": "...", "mood": "..."}.' }]
+    .concat(contents.map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
+  const started = Date.now();
+  for (const m of models) {
+    if (spentMs + (Date.now() - started) > 27000) break;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST', signal: ctrl.signal,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
+        body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 1200, response_format: { type: 'json_object' } })
+      });
+      clearTimeout(timer);
+      if (!r.ok) { console.error('Groq failed, trying next:', m, r.status); continue; }
+      const j = await r.json();
+      const out = j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+      if (out) { console.log('Answered by Groq:', m); return String(out).trim(); }
+    } catch (e) { clearTimeout(timer); console.error('Groq timed out:', m); }
+  }
+  return '';
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -175,9 +204,9 @@ module.exports = async function handler(req, res) {
     outer:
     for (const m of MODELS) {
       for (let k = 0; k < KEYS.length; k++) {
-        if (Date.now() - started > 25000) break outer;
+        if (Date.now() - started > 16000) break outer;
         const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 10000);
+        const timer = setTimeout(() => ctrl.abort(), 7000);
         try {
           r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`,
             { ...reqInit, headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
@@ -194,14 +223,17 @@ module.exports = async function handler(req, res) {
         if (r.status === 404) break; // model missing: same for every key, go to next model
       }
     }
-    if (!r) return res.status(504).json({ error: 'AI timed out' });
-    const data = await r.json();
-    if (!r.ok) {
-      console.error('Gemini error', r.status, JSON.stringify(data).slice(0, 500));
-      return res.status(502).json({ error: 'AI service error' });
+    let raw = '';
+    if (r && r.ok) {
+      const data = await r.json();
+      const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+      raw = parts.map(p => p.text || '').join('').trim();
+    } else {
+      if (r) { try { console.error('Gemini failed', r.status, (await r.text()).slice(0, 300)); } catch (e) {} }
+      // last backup: Groq (same profile and rules, asked to reply in the same JSON)
+      raw = await askGroq(contents, Date.now() - started);
+      if (!raw) return res.status(502).json({ error: 'AI service error' });
     }
-    const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
-    const raw = parts.map(p => p.text || '').join('').trim();
     let reply = raw, meme = null, mood = null;
     try {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
