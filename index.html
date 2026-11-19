@@ -474,6 +474,19 @@ i.nv::after{background:#C0392B}
 .frow .ft.in{transition:opacity .25s,transform .25s}
 .frow.fin{color:var(--ink)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.conwrap{position:relative}
+.plusb{width:34px;height:34px;border-radius:50%;border:1px solid var(--rule);background:var(--panel);display:grid;place-items:center;color:var(--ink);cursor:pointer}
+.plusb:hover,.plusb[aria-expanded="true"]{border-color:var(--ink)}
+.conpop{position:absolute;left:0;bottom:44px;width:270px;background:var(--panel);border:1px solid var(--rule);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:8px;z-index:30}
+.conh{font-size:12px;color:var(--muted);padding:6px 8px 4px;font-weight:600;letter-spacing:.02em}
+.conrow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:8px;border-radius:10px;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.conrow:hover:not(.static){background:var(--side)}
+.conrow.static{cursor:default}
+.conic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex:none}
+.cont{display:flex;flex-direction:column;line-height:1.2;flex:1;min-width:0}
+.cont b{font-size:14px;font-weight:600}.cont small{font-size:12px;color:var(--muted)}
+.conok{font-size:11.5px;color:#1E6B45;white-space:nowrap}
+.connote{font-size:12.5px;color:var(--muted);padding:6px 8px}
 .rcopy{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;padding:2px 0;display:flex;align-items:center;gap:6px}
 .rcopy:hover{color:var(--ink)}
 
@@ -548,7 +561,14 @@ i.nv::after{background:#C0392B}
           <button class="send go" id="send" type="submit" aria-label="Send"><svg class="i" viewBox="0 0 24 24"><path d="M19 6v6a3 3 0 01-3 3H6M10 11l-4 4 4 4"/></svg></button>
         </form>
         <div class="below">
-          <div class="l" aria-hidden="true"><span class="icon-dead dead"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="icon-dead dead"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></span></div>
+          <div class="l conwrap"><button type="button" class="plusb" id="plusb" aria-label="Connectors" aria-haspopup="true" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+            <div class="conpop" id="conpop" role="menu" hidden>
+              <div class="conh">Connectors</div>
+              <button type="button" class="conrow" role="menuitem" data-c="food"><span class="conic" style="background:#FDE7DC">🍽️</span><span class="cont"><b>Tiffin</b><small>Food delivery</small></span><span class="conok">● Connected</span></button>
+              <button type="button" class="conrow" role="menuitem" data-c="grocery"><span class="conic" style="background:#E3F4E8">🧺</span><span class="cont"><b>Kirana</b><small>Groceries in 10 min</small></span><span class="conok">● Connected</span></button>
+              <div class="conrow static"><span class="conic" style="background:#E8EEFC">✦</span><span class="cont"><b>Gemini</b><small>Answers about Mani</small></span><span class="conok">● Connected</span></div>
+              <div class="connote" id="connote" hidden>Answer the 2 questions first to unlock 🙂</div>
+            </div></div>
           <span class="mid">A concept by Manikandan. AI answers by Gemini.</span>
           <div class="r"><span>Hiring agent <em>2030</em></span></div>
         </div>
@@ -1141,6 +1161,20 @@ i.nv::after{background:#C0392B}
       })
       .then(function(){},function(){});
   }
+  // "+" connectors menu: Tiffin (food), Kirana (groceries), Gemini
+  (function(){
+    var pb=document.getElementById('plusb'), pop=document.getElementById('conpop'), note=document.getElementById('connote');
+    function close(){pop.hidden=true;pb.setAttribute('aria-expanded','false');note.hidden=true;}
+    pb.addEventListener('click',function(e){e.stopPropagation();var open=pop.hidden;pop.hidden=!open;pb.setAttribute('aria-expanded',open?'true':'false');note.hidden=true;});
+    document.addEventListener('click',function(e){if(!pop.hidden&&!pop.contains(e.target))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    pop.querySelectorAll('.conrow[data-c]').forEach(function(b){b.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(!unlocked){note.hidden=false;return;}
+      if(busy)return; close();
+      food(b.dataset.c==='food'?'Show me the menu':'Show groceries');
+    });});
+  })();
   input.addEventListener('input',function(){send.classList.toggle('go',!!input.value.trim()||!!nextKey());});
   form.addEventListener('submit',function(e){
     e.preventDefault();
