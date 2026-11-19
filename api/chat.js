@@ -30,17 +30,20 @@ RULES:
 - Keep answers short: 2 to 4 sentences, simple English, friendly and confident. Use **bold** for at most one key phrase. No headings, no bullet lists, no emoji.
 - Refer to him as "Manikandan" or "he".
 
-MEME:
-- You may add a meme picture under your answer, chosen ONLY from the templates listed below.
-- Add one only when a template really fits the moment. If none fits, leave "meme" out.
-- Write short, wholesome captions in playful "Cheems" speak (an extra "m" in some words, e.g. "hemlo", "gud", "desigmer", "amazimg"). top: max 7 words. bottom: max 8 words.
-- Never mean, never mocking anyone, no swearing, no politics. Light and kind. It should still make Manikandan look good.
+MOOD (always required):
+- After writing your reply, read the user's question and your reply, and pick the ONE mood that best matches the feeling of your reply:
+  - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
+  - "wow": something impressive or surprising (Figma plugins, hackathon, career switch from mechanical, agentic commerce testing).
+  - "thinking": a tricky, deep or "why/how" question that needs thought.
+  - "okay": the user says no, not hiring, not interested, maybe later, or other disappointing news, and you accept it politely.
+  - "sorry": you don't have that information, or the question is not about Manikandan.
+  - "hello": greetings, thanks, goodbyes, small talk.
+- Never choose an angry, rude or mocking feeling. If unsure, choose "happy".
 
-TEMPLATES:
-${MEMES.map(m => '- id "' + m.id + '": use when ' + m.when).join('\n')}
-
-OUTPUT: JSON only: {"reply": "...", "meme": {"id": "<template id>", "top": "...", "bottom": "..."}} (omit "meme" if no template fits)
+OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
+
+const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sorry', 'hello'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -88,17 +91,9 @@ module.exports = async function handler(req, res) {
               type: 'OBJECT',
               properties: {
                 reply: { type: 'STRING' },
-                meme: {
-                  type: 'OBJECT',
-                  properties: {
-                    id: { type: 'STRING', enum: MEMES.map(m => m.id) },
-                    top: { type: 'STRING' },
-                    bottom: { type: 'STRING' }
-                  },
-                  required: ['id', 'top', 'bottom']
-                }
+                mood: { type: 'STRING', enum: MOODS }
               },
-              required: ['reply']
+              required: ['reply', 'mood']
             }
           }
         })
@@ -115,9 +110,12 @@ module.exports = async function handler(req, res) {
     try {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
-      const t = j.meme && MEMES.find(m => m.id === j.meme.id);
-      if (t && j.meme.top && j.meme.bottom) {
-        meme = { file: t.file, top: String(j.meme.top).slice(0, 60), bottom: String(j.meme.bottom).slice(0, 70) };
+      const mood = MOODS.includes(j.mood) ? j.mood : 'happy';
+      // pick a picture for that mood (random if there are several)
+      const pics = MEMES.filter(m => m.mood === mood);
+      if (pics.length) {
+        const t = pics[Math.floor(Math.random() * pics.length)];
+        meme = { file: t.file, mood };
       }
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });

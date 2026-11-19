@@ -442,7 +442,7 @@ i.nv::after{background:#C0392B}
 .wb:hover{border-color:var(--ink)}
 
 
-/* Meme card (original cat mascot, Cheems-style captions) */
+/* Meme card: plain cat meme picture chosen by the answer's mood */
 .meme{width:300px;max-width:100%;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--panel)}
 .mimg{position:relative;aspect-ratio:1/1;background:radial-gradient(circle at 50% 60%,#FFF4E6,#F6DDBF)}
 .mimg.real{aspect-ratio:auto;background:#000}
@@ -980,31 +980,17 @@ i.nv::after{background:#C0392B}
     function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}ta.remove();}
   }
   function memeCard(m){
-    return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Meme: '+esc(m.top+' '+m.bottom)+'"><div class="mcap t">'+esc(m.top)+'</div><div class="mcap b">'+esc(m.bottom)+'</div></div>'+
+    return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Cat meme: '+esc(m.mood||'')+'"></div>'+
       '<div class="mbar"><button type="button" class="cpy c1"><span>Copy image</span></button><button type="button" class="cpy c2"><span>Download</span></button></div></div>';
   }
   function memePNG(m){
-    // draw the picture with its captions onto a canvas, like a real meme image
-    return (document.fonts&&document.fonts.load?document.fonts.load('48px Anton'):Promise.resolve()).then(function(){
-      return new Promise(function(res,rej){
-        var img=new Image(); img.onload=function(){
-          var W=600, H=Math.round(img.naturalHeight*W/img.naturalWidth);
-          var c=document.createElement('canvas'); c.width=W; c.height=H; var x=c.getContext('2d');
-          x.drawImage(img,0,0,W,H);
-          function wrap(t,max){var w=t.toUpperCase().split(/\s+/),lines=[],l='';w.forEach(function(word){var tst=l?l+' '+word:word;if(x.measureText(tst).width>max&&l){lines.push(l);l=word;}else l=tst;});if(l)lines.push(l);return lines;}
-          function draw(t,top){
-            var size=Math.round(W*0.085); x.font=size+'px Anton, Impact, Arial Black, sans-serif';
-            x.textAlign='center'; x.lineJoin='round'; x.lineWidth=size*0.16; x.strokeStyle='#000'; x.fillStyle='#fff';
-            var lines=wrap(t,W-40), lh=size*1.08;
-            lines.forEach(function(ln,i){
-              var y= top ? 14+size+i*lh : H-14-(lines.length-1-i)*lh;
-              x.strokeText(ln,W/2,y); x.fillText(ln,W/2,y);
-            });
-          }
-          draw(m.top,true); draw(m.bottom,false);
-          c.toBlob(function(b){b?res(b):rej();},'image/png');
-        }; img.onerror=rej; img.src=m.file;
-      });
+    // the plain meme picture as a PNG (no text added)
+    return new Promise(function(res,rej){
+      var img=new Image(); img.onload=function(){
+        var c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+        c.getContext('2d').drawImage(img,0,0);
+        c.toBlob(function(b){b?res(b):rej();},'image/png');
+      }; img.onerror=rej; img.src=m.file;
     });
   }
   function wireMeme(a,m){
