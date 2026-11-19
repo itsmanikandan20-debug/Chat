@@ -1063,16 +1063,16 @@ i.nv::after{background:#C0392B}
     });
     b2.addEventListener('click',function(){getBlob(m).then(function(blob){save(blob);flash(b2,'Saved ✓','Download');}).catch(function(){window.open(m.file,'_blank');});});
   }
-  var teaAsked=false;
+  var teaAsked=false, teaDone=false;
   function askAI(a,text){
     var t=el('div','tool fade','<span class="l"><span class="ic">G</span><span>Used Gemini · <code>ask_about_manikandan</code></span></span><span class="spin"></span>');
     a.appendChild(t);down();
     aiHist.push({role:'user',text:text});
     var hist=aiHist.slice(-10);
-    return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist})})
+    return fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone})})
       .then(function(r){return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
       .then(function(res){
-        var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info');
+        var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info'&&!teaDone); if(res.mood==='info') teaDone=true;
         t.querySelector('.spin').outerHTML='<span class="ck">✓</span>';
         aiHist.push({role:'model',text:reply});
         var parts=fmt(reply).split('\n').filter(Boolean), ch=Promise.resolve();

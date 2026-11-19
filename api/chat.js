@@ -141,9 +141,12 @@ module.exports = async function handler(req, res) {
       reply = String(j.reply || '').trim();
       mood = MOODS.includes(j.mood) ? j.mood : 'info';
       // Normal info answers end with a friendly tea offer (the site can then order tea)
-      if (mood === 'info' && !/tea/i.test(reply)) reply = reply.replace(/\s*$/, '') + ' Do you need tea? ☕';
+      const teaDone = !!(body && body.teaDone);
+      if (mood === 'info' && !teaDone && !/tea/i.test(reply)) reply = reply.replace(/\s*$/, '') + ' Do you need tea? ☕';
+      if (mood === 'info' && teaDone) reply = reply.replace(/\s*Do you need tea\?\s*☕?/gi, '').trim();
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
-      const own = MEMES.filter(m => m.mood === mood);
+      // tea cat shows only once per visit
+      const own = (mood === 'info' && teaDone) ? [] : MEMES.filter(m => m.mood === mood);
       if (own.length) meme = { file: own[Math.floor(Math.random() * own.length)].file, mood };
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
