@@ -93,5 +93,20 @@
     "id": "wow-2",
     "mood": "wow",
     "file": "/memes/wow-2.jpg"
+  },
+  {
+    "id": "shock-1",
+    "mood": "shock",
+    "file": "/memes/shock-1.jpg"
+  },
+  {
+    "id": "shock-2",
+    "mood": "shock",
+    "file": "/memes/shock-2.jpg"
+  },
+  {
+    "id": "shock-3",
+    "mood": "shock",
+    "file": "/memes/shock-3.jpg"
   }
 ]

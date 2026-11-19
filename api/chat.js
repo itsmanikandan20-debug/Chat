@@ -57,6 +57,7 @@ MOOD (always required):
   - "happy": good news, praise, a nice positive answer about Manikandan (skills, work, experience).
   - "hire": the user says they will hire him, want to interview him, will call him, will share his profile, like him for a role, or anything that moves him closer to a job. Thank them warmly and say he would love to connect (his email is itsmanikandan20@gmail.com).
   - "wow": something impressive or surprising (Figma plugins, hackathon, UI-Finder, AI design agent, career switch from mechanical), or the user says wow, amazing, impressive, nice, great.
+  - "shock": the user is surprised or can't believe something: "really?", "seriously?", "what?!", "no way", "omg", "are you sure?", or the answer is unexpected (for example a mechanical engineer who became a designer). Shock is surprise, wow is being impressed.
   - "thinking": a tricky, deep or "why/how" question that needs thought.
   - "okay": (not for a plain "ok") the user says no, not hiring, not interested, maybe later, or other disappointing news. You accept it calmly and kindly.
   - "ok": the user just says ok, okay, fine, sure, got it, alright, noted, cool, or agrees or acknowledges something. Reply briefly.
@@ -69,7 +70,7 @@ MOOD (always required):
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['happy', 'hire', 'wow', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
+const MOODS = ['happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello'];
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
