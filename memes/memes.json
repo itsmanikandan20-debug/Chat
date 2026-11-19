@@ -173,5 +173,10 @@
     "id": "info-2",
     "mood": "info-more",
     "file": "/memes/info-2.jpg"
+  },
+  {
+    "id": "info-3",
+    "mood": "info-more",
+    "file": "/memes/info-3.jpg"
   }
 ]
