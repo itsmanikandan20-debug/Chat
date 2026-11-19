@@ -540,7 +540,7 @@ i.nv::after{background:#C0392B}
         </form>
         <div class="below">
           <div class="l" aria-hidden="true"><span class="icon-dead dead"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="icon-dead dead"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></span></div>
-          <span class="mid">A concept by Manikandan. AI answers by Gemini. Cat GIFs by GIPHY.</span>
+          <span class="mid">A concept by Manikandan. AI answers by Gemini.</span>
           <div class="r"><span>Hiring agent <em>2030</em></span></div>
         </div>
       </div>
@@ -1027,7 +1027,7 @@ i.nv::after{background:#C0392B}
     function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}ta.remove();}
   }
   function memeCard(m){
-    var credit=m.giphy?'<a class="gcred" href="'+esc(m.link||'https://giphy.com')+'" target="_blank" rel="noopener">Powered by GIPHY</a>':'';
+    m.giphy=/\.gif(\?|$)/i.test(m.file); var credit='';
     return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Cat GIF: '+esc(m.mood||'')+'" loading="lazy"></div>'+
       '<div class="mbar"><button type="button" class="cpy c1"><span>'+(m.giphy?'Copy GIF':'Copy image')+'</span></button><button type="button" class="cpy c2"><span>Download</span></button>'+credit+'</div></div>';
   }
@@ -1049,7 +1049,7 @@ i.nv::after{background:#C0392B}
     b1.addEventListener('click',function(){
       if(m.giphy){
         // a GIF link pastes as a moving GIF in WhatsApp, Slack, Teams
-        var t=m.file;
+        var t=new URL(m.file,location.href).href;
         (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).then(function(){flash(b1,'Copied ✓',l1);},function(){
           var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');flash(b1,'Copied ✓',l1);}catch(e){}ta.remove();});
         return;

@@ -1,7 +1,7 @@
 // Vercel serverless function: answers questions about Manikandan using Google Gemini.
 // The API key stays on the server. Set GEMINI_API_KEY in Vercel > Project > Settings > Environment Variables.
-// Optional: GEMINI_MODEL (default below), ALLOWED_ORIGIN (e.g. https://your-site.vercel.app),
-// GIPHY_API_KEY (cat GIFs under answers; without it, local pictures in /memes are used).
+// Optional: GEMINI_MODEL (default below), ALLOWED_ORIGIN (e.g. https://your-site.vercel.app).
+// Meme pictures/GIFs live in /memes and are listed in memes/memes.json with a mood.
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const MEMES = require('../memes/memes.json');
@@ -69,55 +69,6 @@ OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 
 const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sad', 'sorry', 'hello'];
 
-// What to search on GIPHY for each mood (cats only, never angry)
-const GIPHY_Q = {
-  happy: 'happy cat smiling',
-  wow: 'surprised cat',
-  thinking: 'cat thinking hmm',
-  okay: 'sad cat thumbs up',
-  sad: 'crying cat',
-  sorry: 'sad kitten',
-  hello: 'cat waving hi'
-};
-// Only real cats: the title must say cat/kitten, and must not hint at cartoons, people or text
-const CAT_WORD = /\b(cat|cats|kitten|kittens|kitty|kitties|meow)\b/i;
-const BAD_WORD = /(anime|cartoon|animated|illustration|drawing|chibi|girl|boy|woman|man\b|people|person|text|quote|words|lettering|typography|sticker|emoji|dog|puppy|hello kitty|angry|mad\b|fight|attack|hiss|scream)/i;
-
-// Ask GIPHY for a cat GIF that fits the mood. Returns null if anything fails.
-async function giphyCat(mood) {
-  const key = process.env.GIPHY_API_KEY;
-  if (!key) return null;
-  try {
-    const url = 'https://api.giphy.com/v1/gifs/search?' + new URLSearchParams({
-      api_key: key, q: GIPHY_Q[mood], limit: '50', rating: 'g', lang: 'en'
-    });
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 4000);
-    const r = await fetch(url, { signal: ctrl.signal });
-    clearTimeout(timer);
-    if (!r.ok) { console.error('GIPHY error', r.status); return null; }
-    const j = await r.json();
-    const list = (j.data || []).filter(g => {
-      const t = ((g.title || '') + ' ' + (g.alt_text || '') + ' ' + (g.slug || '')).replace(/-/g, ' ');
-      return g.images && g.images.downsized && g.images.downsized.url &&
-        CAT_WORD.test(t) && !BAD_WORD.test(t);
-    }).slice(0, 3); // only GIPHY's top 3 most relevant matches
-    if (!list.length) return null;
-    const g = list[Math.floor(Math.random() * list.length)];
-    return {
-      file: g.images.downsized.url,
-      link: g.url,
-      mood,
-      giphy: true,
-      w: Number(g.images.downsized.width) || 0,
-      h: Number(g.images.downsized.height) || 0
-    };
-  } catch (e) {
-    console.error('GIPHY failed', e && e.message);
-    return null;
-  }
-}
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -184,15 +135,9 @@ module.exports = async function handler(req, res) {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
       const mood = MOODS.includes(j.mood) ? j.mood : 'happy';
-      // 1st choice: Mani's own chosen pictures for this mood. 2nd: a cat GIF from GIPHY. 3rd: backup pictures.
-      const pick = list => list[Math.floor(Math.random() * list.length)];
-      const own = MEMES.filter(m => m.mood === mood && !m.backup);
-      if (own.length) meme = { file: pick(own).file, mood };
-      if (!meme) meme = await giphyCat(mood);
-      if (!meme) {
-        const backup = MEMES.filter(m => m.mood === mood && m.backup);
-        if (backup.length) meme = { file: pick(backup).file, mood };
-      }
+      // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
+      const own = MEMES.filter(m => m.mood === mood);
+      if (own.length) meme = { file: own[Math.floor(Math.random() * own.length)].file, mood };
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
     return res.status(200).json({ reply, meme });
