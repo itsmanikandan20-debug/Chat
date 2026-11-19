@@ -1,6 +1,7 @@
 // Vercel serverless function: answers questions about Manikandan using Google Gemini.
 // The API key stays on the server. Set GEMINI_API_KEY in Vercel > Project > Settings > Environment Variables.
-// Optional: GEMINI_MODEL (default below), ALLOWED_ORIGIN (e.g. https://your-site.vercel.app).
+// Optional: GEMINI_MODEL (default below), ALLOWED_ORIGIN (e.g. https://your-site.vercel.app),
+// GIPHY_API_KEY (cat GIFs under answers; without it, local pictures in /memes are used).
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const MEMES = require('../memes/memes.json');
@@ -44,6 +45,47 @@ OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
 const MOODS = ['happy', 'wow', 'thinking', 'okay', 'sorry', 'hello'];
+
+// What to search on GIPHY for each mood (cats only, never angry)
+const GIPHY_Q = {
+  happy: 'happy cat',
+  wow: 'shocked cat',
+  thinking: 'thinking cat',
+  okay: 'sad cat thumbs up',
+  sorry: 'sad cat',
+  hello: 'cat waving hello'
+};
+
+// Ask GIPHY for a cat GIF that fits the mood. Returns null if anything fails.
+async function giphyCat(mood) {
+  const key = process.env.GIPHY_API_KEY;
+  if (!key) return null;
+  try {
+    const url = 'https://api.giphy.com/v1/gifs/search?' + new URLSearchParams({
+      api_key: key, q: GIPHY_Q[mood], limit: '25', rating: 'g', lang: 'en'
+    });
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!r.ok) { console.error('GIPHY error', r.status); return null; }
+    const j = await r.json();
+    const list = (j.data || []).filter(g => g.images && g.images.downsized && g.images.downsized.url);
+    if (!list.length) return null;
+    const g = list[Math.floor(Math.random() * list.length)];
+    return {
+      file: g.images.downsized.url,
+      link: g.url,
+      mood,
+      giphy: true,
+      w: Number(g.images.downsized.width) || 0,
+      h: Number(g.images.downsized.height) || 0
+    };
+  } catch (e) {
+    console.error('GIPHY failed', e && e.message);
+    return null;
+  }
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -111,11 +153,11 @@ module.exports = async function handler(req, res) {
       const j = JSON.parse(raw.replace(/^```(json)?|```$/g, '').trim());
       reply = String(j.reply || '').trim();
       const mood = MOODS.includes(j.mood) ? j.mood : 'happy';
-      // pick a picture for that mood (random if there are several)
-      const pics = MEMES.filter(m => m.mood === mood);
-      if (pics.length) {
-        const t = pics[Math.floor(Math.random() * pics.length)];
-        meme = { file: t.file, mood };
+      // 1st choice: a cat GIF from GIPHY. Backup: our own pictures for that mood.
+      meme = await giphyCat(mood);
+      if (!meme) {
+        const pics = MEMES.filter(m => m.mood === mood);
+        if (pics.length) meme = { file: pics[Math.floor(Math.random() * pics.length)].file, mood };
       }
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
