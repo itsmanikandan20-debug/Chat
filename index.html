@@ -1036,7 +1036,7 @@ i.nv::after{background:#C0392B}
     var sc=road.querySelector('.scooter'), ask=road.querySelector('.ask');
     requestAnimationFrame(function(){requestAnimationFrame(function(){sc.classList.add(cash?'mid':'go');});});
     var drink=it.sec.id==='drinks'||/milk|juice|tea|coffee|lassi|soda|coke|shake/i.test(it.n);
-    var grocery=it.sec.src==='Blinkit';
+    var grocery=it.sec.src==='Blinkit'&&!drink; // milk etc. can be drunk
     function handOver(d){
       if(gap.parentNode)gap.remove();
       if(grocery){
