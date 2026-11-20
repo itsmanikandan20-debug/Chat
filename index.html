@@ -696,6 +696,11 @@ i.nv::after{background:#C0392B}
       .then(function(){return typeP(a,'<span class="hl">If he gets a good opportunity, the above words of becoming one of the best designers will hopefully become true by 2030. 🫠</span>');})
       .then(function(){return block(a,memeCard({file:'/memes/job-1.png',mood:'job'}));});
     },
+    resume:function(a){
+      return typeP(a,'Here is <b>Manikandan’s resume</b>. Tap to open it or download it.')
+      .then(function(){return block(a,'<div class="rfile"><span class="rpdf" aria-hidden="true">PDF</span><span class="rinfo"><b>Manikandan_Resume.pdf</b><small>PDF · 1 page · 1.6 MB</small></span><span class="rbtns"><a class="rbtn" href="/Manikandan_Resume.pdf" target="_blank" rel="noopener">Open</a><a class="rbtn fill" href="/Manikandan_Resume.pdf" download="Manikandan_Resume.pdf">Download</a></span></div>');})
+      .then(function(){return block(a,memeCard({file:'/memes/resume-1.jpg',mood:'business'}));});
+    },
     work:function(a,intro){
       var B=LINKS.behance, P=LINKS.portfolio;
       function th(kind,c1,c2){
