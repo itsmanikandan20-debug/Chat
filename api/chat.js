@@ -5,6 +5,7 @@
 
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 const MEMES = require('../memes/memes.json');
+const { getBehance } = require('./behance.js');
 
 const PROFILE = `
 You are the hiring assistant on Manikandan's personal website. You only talk about Manikandan.
@@ -125,12 +126,12 @@ OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello', 'bye', 'no'];
 
 // Backup AI: Groq (OpenAI-style API). Uses GROQ_API_KEY; tries a few models, skips retired ones.
-async function askGroq(contents, spentMs) {
+async function askGroq(contents, spentMs, SYS) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return '';
   const models = (process.env.GROQ_MODELS || 'openai/gpt-oss-120b,openai/gpt-oss-20b')
     .split(',').map(x => x.trim()).filter(Boolean);
-  const messages = [{ role: 'system', content: PROFILE + '\nReply ONLY with a JSON object like {"reply": "...", "mood": "..."}.' }]
+  const messages = [{ role: 'system', content: SYS + '\nReply ONLY with a JSON object like {"reply": "...", "mood": "..."}.' }]
     .concat(contents.slice(-6).map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
   const started = Date.now();
   for (const m of models) {
@@ -185,6 +186,18 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // New projects he uploads to Behance are picked up automatically from his public Behance feed.
+    // Only projects published after the 10 listed ones are added (older Behance items stay hidden on purpose).
+    let SYS = PROFILE;
+    try {
+      const known = new Set((PROFILE.match(/https:\/\/www\.behance\.net\/gallery\/\d+/g) || []));
+      const CUTOFF = Date.parse('2026-11-20T00:00:00Z');
+      const fresh = (await getBehance(2500)).filter(x => !known.has((x.link.match(/https:\/\/www\.behance\.net\/gallery\/\d+/) || [''])[0]) && Date.parse(x.date) > CUTOFF);
+      if (fresh.length) {
+        SYS += '\n\nNEW PROJECTS (recently uploaded to his Behance; these are real and on-topic. Treat them like his other projects: include them when listing his projects, give the link when asked. You only know the title and the short description below, so for details say it is a new project and share the link; never invent details):\n' +
+          fresh.map(x => `- ${x.title} (uploaded ${new Date(Date.parse(x.date)).toDateString()}): ${x.about || 'no description yet'} Link: ${x.link}`).join('\n');
+      }
+    } catch (e) { console.error('Behance add failed', e.message); }
     // Try the main model, then backups, if Google is busy (503), rate-limited (429) or the model is missing (404)
     const MODELS = [MODEL, ...(process.env.GEMINI_BACKUP_MODELS || 'gemini-3.8-flash,gemini-3.8-flash-lite,gemini-3.5-flash').split(',').map(x => x.trim())]
       .filter((m, i, arr) => m && arr.indexOf(m) === i);
@@ -192,7 +205,7 @@ module.exports = async function handler(req, res) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: PROFILE }] },
+          systemInstruction: { parts: [{ text: SYS }] },
           contents,
           generationConfig: {
             maxOutputTokens: 1200,
@@ -233,7 +246,7 @@ module.exports = async function handler(req, res) {
     const wait = ms => new Promise(res2 => setTimeout(() => res2(''), ms));
 
     // ask Gemini and Groq at the same time; the first good answer wins
-    const race = [gemini(MODELS[0], 0, 14000), askGroq(contents, 0)];
+    const race = [gemini(MODELS[0], 0, 14000), askGroq(contents, 0, SYS)];
     if (KEYS.length > 1) race.push(gemini(MODELS[0], 1, 14000));
     if (MODELS[1]) race.push(gemini(MODELS[1], KEYS.length > 1 ? 1 : 0, 14000));
     let raw = await firstGood(race);

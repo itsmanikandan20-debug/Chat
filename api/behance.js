@@ -10,7 +10,7 @@ function pick(tag, s) {
 }
 
 async function getBehance(ms = 2500) {
-  if (cache.items && Date.now() - cache.at < 6 * 3600 * 1000) return cache.items;
+  if (cache.items && Date.now() - cache.at < 60 * 60 * 1000) return cache.items;
   const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms);
   try {
     const r = await fetch(FEED, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (portfolio chat)' } });
