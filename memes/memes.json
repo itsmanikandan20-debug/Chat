@@ -205,8 +205,18 @@
     "file": "/memes/sorry-2.jpg"
   },
   {
-    "id": "thanks-1",
+    "id": "welcome-1",
     "mood": "thanks",
-    "file": "/memes/thanks-1.jpg"
+    "file": "/memes/welcome-1.jpg"
+  },
+  {
+    "id": "welcome-2",
+    "mood": "thanks",
+    "file": "/memes/welcome-2.jpg"
+  },
+  {
+    "id": "welcome-3",
+    "mood": "thanks",
+    "file": "/memes/welcome-3.jpg"
   }
 ]
