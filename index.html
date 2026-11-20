@@ -1219,9 +1219,8 @@ i.nv::after{background:#C0392B}
     var fc=foodCtx; foodCtx=null;
     if(fc && /^(show |any |see |give |some )?(more|others?|other (items?|options?|food|things)|more (items?|options?|food|drinks?|like this|please)|what else|anything else|something else|next)\b/.test(low)){
       if(busy)return; busy=true;send.disabled=true; startTurn(t); var ma=el('div','a'); thread.appendChild(ma);
-      tool(ma,fc.src==='Blinkit'?'B':'Z','Used '+fc.src,'list_menu')
-      .then(function(){return typeP(ma,'Here’s more like '+fc.n.toLowerCase()+'. Tap anything to order.');})
-      .then(function(){return block(ma,menuCard(fc.sec));}).then(function(){wireMenu(ma);foodCtx=fc;busy=false;send.disabled=false;});
+      wait(400).then(function(){return typeP(ma,'More items are coming soon! 🛍️ For now, tap <b>ADD</b> on the card above to order.');})
+      .then(function(){return block(ma,memeCard({file:'/memes/more-food-1.png',mood:'shopping'}));}).then(function(){foodCtx=fc;busy=false;send.disabled=false;});
       return;
     }
     // the AI just asked "Do you need tea?" and the visitor said yes
