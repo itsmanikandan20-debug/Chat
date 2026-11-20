@@ -1066,18 +1066,18 @@ i.nv::after{background:#C0392B}
     }
     // Cash on delivery: rider waits in the middle until the visitor types 💸
     wait(reduce?0:1500).then(function(){
-      say('Hi! That’s ₹'+cash+' please 🙂 Type 💸 and send to pay');
+      say('Hi! That’s ₹'+cash+' please 🙂');
       // laptops have no emoji key: let the visitor copy 💸 and paste it
       var cbtn=el('button','askcopy'); cbtn.type='button'; cbtn.textContent='Copy 💸';
       cbtn.addEventListener('click',function(){
-        function done(){cbtn.textContent='Copied! Paste (Ctrl+V) & send';input.focus({preventScroll:true});}
+        function done(){cbtn.textContent='Copied 💸';input.focus({preventScroll:true});}
         if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText('💸').then(done,function(){input.value='💸';done();});}
         else{input.value='💸';done();}
       });
       ask.appendChild(document.createTextNode(' ')); ask.appendChild(cbtn);
-      if(PH0===null)PH0=input.placeholder; input.placeholder='Type 💸 to pay ₹'+cash; input.focus({preventScroll:true});
+      if(PH0===null)PH0=input.placeholder; input.placeholder='💸'; input.focus({preventScroll:true});
       codPending={
-        nag:function(){var b=ask.querySelector('.askcopy');say('Please type 💸 to pay ₹'+cash+' 🙂');if(b){ask.appendChild(document.createTextNode(' '));ask.appendChild(b);}},
+        nag:function(){var b=ask.querySelector('.askcopy');say('₹'+cash+' please 🙂');if(b){ask.appendChild(document.createTextNode(' '));ask.appendChild(b);}},
         pay:function(u){
           input.placeholder=PH0; say('Thank you! Enjoy 😋');
           // the 💸 message erases itself from the chat
