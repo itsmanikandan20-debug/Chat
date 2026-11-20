@@ -930,7 +930,7 @@ i.nv::after{background:#C0392B}
     } else {
       p=askAI(a,text);
     }
-    p.then(function(){if(it)foodCtx={sec:it.sec.id,n:it.n,src:it.sec.src};busy=false;send.disabled=false;input.focus({preventScroll:true});});
+    p.then(function(){foodCtx=it?{sec:it.sec.id,n:it.n,src:it.sec.src}:{sec:'menu',n:'food',src:'Zomato'};busy=false;send.disabled=false;input.focus({preventScroll:true});});
   }
 
   function fakeQR(){
