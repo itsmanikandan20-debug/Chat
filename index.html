@@ -607,7 +607,12 @@ i.nv::after{background:#C0392B}
   var PH=['Who will be the best designer in 2030?','What is his current status?','Show his work','Ask anything…'];
 
   function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
-  function down(){scroll.scrollTop=scroll.scrollHeight;}
+  // keep the chat pinned to the newest message, also when pictures finish loading later
+  var stick=true;
+  function down(){stick=true;scroll.scrollTop=scroll.scrollHeight;}
+  scroll.addEventListener('scroll',function(){stick=(scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight)<160;},{passive:true});
+  if(window.ResizeObserver){new ResizeObserver(function(){if(stick)scroll.scrollTop=scroll.scrollHeight;}).observe(thread);}
+  thread.addEventListener('load',function(e){if(stick&&e.target.tagName==='IMG')scroll.scrollTop=scroll.scrollHeight;},true);
   function wait(ms){return new Promise(function(r){setTimeout(r,reduce?0:ms);});}
   function typeP(parent,html){
     var p=el('p');if(/^\s*[•\-\*] /.test(html)){p.className='bl';html=html.replace(/^\s*[\-\*] /,'• ');}parent.appendChild(p);
@@ -1124,7 +1129,7 @@ i.nv::after{background:#C0392B}
   }
   function memeCard(m){
     m.giphy=/\.gif(\?|$)/i.test(m.file); var credit='';
-    return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Cat GIF: '+esc(m.mood||'')+'" loading="lazy"></div></div>';
+    return '<div class="meme"><div class="mimg real"><img src="'+esc(m.file)+'" alt="Cat GIF: '+esc(m.mood||'')+'"></div></div>';
   }
   function getBlob(m){
     if(m.giphy) return fetch(m.file).then(function(r){if(!r.ok)throw 0;return r.blob();});
