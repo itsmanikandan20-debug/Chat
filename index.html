@@ -1152,16 +1152,16 @@ i.nv::after{background:#C0392B}
     });
     b2.addEventListener('click',function(){getBlob(m).then(function(blob){save(blob);flash(b2,'Saved ✓','Download');}).catch(function(){window.open(m.file,'_blank');});});
   }
-  var teaAsked=false, teaDone=false;
+  var teaAsked=false, teaDone=false, usedMemes=[];
   function askAI(a,text){
     var steps=liveRow(a,funWords(text));
     aiHist.push({role:'user',text:text});
     var hist=aiHist.slice(-10);
     var ac=new AbortController(); var tmo=setTimeout(function(){ac.abort();},30000);
-    return fetch('/api/chat',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone})})
+    return fetch('/api/chat',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,teaDone:teaDone,usedMemes:usedMemes})})
       .then(function(r){clearTimeout(tmo);return r.json().then(function(j){if(!r.ok||!j.reply)throw new Error(j.error||'failed');return j;});})
       .then(function(res){
-        var reply=res.reply, meme=res.meme; teaAsked=(res.mood==='info'&&!teaDone); if(res.mood==='info') teaDone=true;
+        var reply=res.reply, meme=res.meme; if(meme&&meme.file)usedMemes.push(meme.file); teaAsked=(res.mood==='info'&&!teaDone); if(res.mood==='info') teaDone=true;
         return steps.stop('Found it ✨').then(function(){
         aiHist.push({role:'model',text:reply.replace(/\s*Do you need tea\?\s*☕?/gi,'')});
         var parts=fmt(reply).split('\n').filter(Boolean), ch=Promise.resolve();

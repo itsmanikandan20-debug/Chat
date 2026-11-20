@@ -258,7 +258,15 @@ module.exports = async function handler(req, res) {
       // Only Mani's own pictures/GIFs from /memes for this mood (random if several). None = no meme.
       // first info answer: tea cat. Later info answers: the 'info-more' cats (glasses, thinking)
       const own = MEMES.filter(m => m.mood === ((mood === 'info' && teaDone) ? 'info-more' : mood));
-      if (own.length) meme = { file: own[Math.floor(Math.random() * own.length)].file, mood };
+      // Don't repeat a picture in the same chat. If this mood's pictures are all used,
+      // show a "Drink water" picture instead (each only once per chat), then allow repeats.
+      const used = new Set(Array.isArray(body && body.usedMemes) ? body.usedMemes.slice(-60) : []);
+      const pick = a => a[Math.floor(Math.random() * a.length)].file;
+      const fresh = own.filter(m => !used.has(m.file));
+      const water = MEMES.filter(m => m.mood === 'water' && !used.has(m.file));
+      if (fresh.length) meme = { file: pick(fresh), mood };
+      else if (water.length) meme = { file: pick(water), mood: 'water' };
+      else if (own.length) meme = { file: pick(own), mood };
     } catch (e) { /* plain text answer, no meme */ }
     if (!reply) return res.status(502).json({ error: 'Empty answer' });
     return res.status(200).json({ reply, meme, mood });

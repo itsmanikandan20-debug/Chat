@@ -243,5 +243,15 @@
     "id": "no-2",
     "mood": "no",
     "file": "/memes/no-2.jpg"
+  },
+  {
+    "id": "water-1",
+    "mood": "water",
+    "file": "/memes/water-1.jpg"
+  },
+  {
+    "id": "water-2",
+    "mood": "water",
+    "file": "/memes/water-2.jpg"
   }
 ]
