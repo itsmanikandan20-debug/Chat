@@ -202,6 +202,7 @@ svg.i{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-
 .pwrap .pcard{position:relative;z-index:3}
 .catg{position:absolute;z-index:1;right:86px;top:10px;width:100px;height:146px;transform:translateX(0);transition:transform .65s cubic-bezier(.3,1.35,.5,1)}
 .catg svg,.hand svg{display:block;width:100%;height:100%}
+.pwrap .catg,.pwrap .hand{display:none!important}
 .pwrap.peek .catg{transform:translateX(78px)}
 .pwrap.pull .catg{transition:transform .55s cubic-bezier(.6,0,.9,.4);transform:translateX(0)}
 .catg .pic{transform-origin:55px 40px;transform:rotate(-14deg) scale(.6);opacity:0;transition:transform .45s cubic-bezier(.3,1.5,.5,1) .35s,opacity .2s .35s}
@@ -682,15 +683,7 @@ i.nv::after{background:#C0392B}
         '<div class="pmeta"><span class="badge">Websites</span><span class="badge">UX case studies</span><span class="badge">Figma plugins with n8n</span></div>'+
         '<div class="pbtns"><a class="pbtn fill" href="'+LINKS.linkedin+'">View profile</a><a class="pbtn" href="'+LINKS.portfolio+'">Portfolio</a></div>'+
         '</div></div><div class="hand" aria-hidden="true"><svg viewBox="0 0 92 46"><rect x="0" y="9" width="46" height="28" rx="3" fill="#2B4C9B"/><path d="M8 9 v28 M18 9 v28" stroke="#3A5DB0" stroke-width="1.2"/><rect x="42" y="7" width="8" height="32" rx="2" fill="#F4F2EC" stroke="#C9C4B6" stroke-width="1"/><path d="M50 12 C58 10 66 10 72 12 C80 10 86 13 86 17 C86 20 82 21 78 21 C84 22 87 25 86 28 C85 31 81 31 77 30.5 C82 32 84 35 82 37.5 C80 40 75 39.5 71 38.5 C66 39.5 58 38 50 35 Z" fill="#F2C29B" stroke="#8A5A3A" stroke-width="1.7" stroke-linejoin="round"/><path d="M71 12.5 C74 15 74 18 72 20 M77 21 C79 23 79 26 77 28 M73 30.5 C75 32.5 75 35 73 37" stroke="#8A5A3A" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M56 12 C60 7 66 6 69 8.5 C71 10.5 68 12.5 64 13" fill="#F2C29B" stroke="#8A5A3A" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>');})
-      .then(function(){
-        if(reduce) return;
-        var w=a.querySelector('.pwrap');
-        // cat peeks out holding a picture, then a hand reaches from behind the card and pulls it back in
-        setTimeout(function(){w.classList.add('peek');},900);
-        setTimeout(function(){w.classList.add('grab');},4200);
-        setTimeout(function(){w.classList.remove('peek','grab');w.classList.add('pull');},4750);
-        setTimeout(function(){w.classList.remove('pull');},5500);
-      });
+      ;
     },
     status:function(a){
       return tool(a,'P','Read profile','manikandan')
@@ -699,7 +692,8 @@ i.nv::after{background:#C0392B}
       .then(function(){return typeP(a,'He hasn’t had the opportunity to work on a live mobile app project yet, but he has worked on mobile app case studies.');})
       .then(function(){return typeP(a,'He is also interested in AI and how it can improve digital experiences. He has explored AI tools, AI-powered design workflows, automation using n8n and integrating AI models into design tools.');})
       .then(function(){return typeP(a,'Currently, he is <b>open to new opportunities</b>. He wants to join a bigger team, learn from senior designers, work on meaningful products and continue growing as a designer.');})
-      .then(function(){return typeP(a,'<span class="hl">If he gets a good opportunity, the above words of becoming one of the best designers will hopefully become true by 2030. 🫠</span>');});
+      .then(function(){return typeP(a,'<span class="hl">If he gets a good opportunity, the above words of becoming one of the best designers will hopefully become true by 2030. 🫠</span>');})
+      .then(function(){return block(a,memeCard({file:'/memes/job-1.png',mood:'job'}));});
     },
     work:function(a,intro){
       var B=LINKS.behance, P=LINKS.portfolio;
