@@ -870,6 +870,7 @@ i.nv::after{background:#C0392B}
 
   function menuCard(first){
     var order=MENU.slice();
+    if(first&&first!=='grocery'){var fs=MENU.filter(function(s){return s.id===first;});order=fs.concat(MENU.filter(function(s){return s.id!==first;}));}
     if(first==='grocery') order=MENU.filter(function(s){return s.src==='Blinkit';}).concat(MENU.filter(function(s){return s.src!=='Blinkit';}));
     var h='<div class="menu"><div class="mtabs">';
     order.forEach(function(s,i){h+='<button type="button" class="mtab'+(i===0?' on':'')+'" data-s="'+s.id+'">'+(s.dot==='nonveg'?'<i class="nv"></i>':s.src==='Blinkit'?'':'<i class="vg"></i>')+s.t+'</button>';});
@@ -893,6 +894,7 @@ i.nv::after{background:#C0392B}
     });});
   }
 
+  var lastFood=null, foodCtx=null;
   function food(text, forced, forcedQty){
     if(busy) return;
     busy=true; send.disabled=true;
@@ -902,6 +904,7 @@ i.nv::after{background:#C0392B}
     var t=text.toLowerCase();
     var p;
     if(it){
+      lastFood={sec:it.sec.id,n:it.n}; aiHist.push({role:'user',text:text}); aiHist.push({role:'model',text:'I showed shops near you selling '+it.n+' (food order card from '+it.sec.src+').'});
       p=orderFlow(a,it,forcedQty||qtyOf(text));
     } else if(miss){
       var name=miss.charAt(0).toUpperCase()+miss.slice(1);
@@ -916,7 +919,7 @@ i.nv::after{background:#C0392B}
     } else {
       p=askAI(a,text);
     }
-    p.then(function(){busy=false;send.disabled=false;input.focus({preventScroll:true});});
+    p.then(function(){if(it)foodCtx={sec:it.sec.id,n:it.n,src:it.sec.src};busy=false;send.disabled=false;input.focus({preventScroll:true});});
   }
 
   function fakeQR(){
@@ -1212,6 +1215,15 @@ i.nv::after{background:#C0392B}
     input.value='';
     if(!unlocked){ask(t,null);return;}
     var low=t.toLowerCase();
+    // right after a food card, "more" means more food like that, not more about Mani
+    var fc=foodCtx; foodCtx=null;
+    if(fc && /^(show |any |see |give |some )?(more|others?|other (items?|options?|food|things)|more (items?|options?|food|drinks?|like this|please)|what else|anything else|something else|next)\b/.test(low)){
+      if(busy)return; busy=true;send.disabled=true; startTurn(t); var ma=el('div','a'); thread.appendChild(ma);
+      tool(ma,fc.src==='Blinkit'?'B':'Z','Used '+fc.src,'list_menu')
+      .then(function(){return typeP(ma,'Here’s more like '+fc.n.toLowerCase()+'. Tap anything to order.');})
+      .then(function(){return block(ma,menuCard(fc.sec));}).then(function(){wireMenu(ma);foodCtx=fc;busy=false;send.disabled=false;});
+      return;
+    }
     // the AI just asked "Do you need tea?" and the visitor said yes
     // only a short, clear "yes" to the tea question orders tea (shows what they typed)
     var clearYes=/^(yes|yeah|yea|ya|yep|yup|sure|ok|okay|ofc|of course|please|why not|yes please|ok sure|sure why not|i need|need|i want)[\s!.🙂☕]*$/.test(low) || /^(yes|ok|okay|sure|ya|yeah)\b.{0,12}\btea\b/.test(low);
