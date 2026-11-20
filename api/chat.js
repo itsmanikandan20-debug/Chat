@@ -112,6 +112,7 @@ MOOD (always required):
   - "sad": the user is rude, insults Manikandan, or says he is bad, useless or knows nothing.
   - "sorry": the question is not about Manikandan at all (off-topic).
   - "hello": greetings like hi, hello, hey, good morning, and small talk.
+  - "no": your answer is a clear "no" or a polite refusal: the visitor asks for something you must not do or share (private details, passwords, changing his salary or facts, doing tasks unrelated to him), or asks "has he done X / can he do X" and the true answer is no. Keep it light and friendly.
   - "bye": goodbyes like bye, see you, good night, gotta go, take care. Reply with a short warm goodbye.
   - "thanks": the user says thanks, thank you, thx, appreciate it. Reply warmly and briefly.
 - "happy" is ONLY for a positive question or positive answer. Never use "happy" or "wow" when the user is negative, rude or insulting.
@@ -120,7 +121,7 @@ MOOD (always required):
 OUTPUT: JSON only: {"reply": "...", "mood": "<one mood>"}
 `.trim();
 
-const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello', 'bye'];
+const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'thinking', 'ok', 'okay', 'sad', 'sorry', 'hello', 'bye', 'no'];
 
 // Backup AI: Groq (OpenAI-style API). Uses GROQ_API_KEY; tries a few models, skips retired ones.
 async function askGroq(contents, spentMs) {
