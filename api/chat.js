@@ -128,20 +128,20 @@ const MOODS = ['info', 'thanks', 'sideeye', 'happy', 'hire', 'wow', 'shock', 'th
 async function askGroq(contents, spentMs) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return '';
-  const models = (process.env.GROQ_MODELS || 'openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.1-8b-instant')
+  const models = (process.env.GROQ_MODELS || 'openai/gpt-oss-120b,openai/gpt-oss-20b')
     .split(',').map(x => x.trim()).filter(Boolean);
   const messages = [{ role: 'system', content: PROFILE + '\nReply ONLY with a JSON object like {"reply": "...", "mood": "..."}.' }]
-    .concat(contents.map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
+    .concat(contents.slice(-6).map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text })));
   const started = Date.now();
   for (const m of models) {
-    if (spentMs + (Date.now() - started) > 15000) break;
+    if (spentMs + (Date.now() - started) > 18000) break;
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 7000);
+    const timer = setTimeout(() => ctrl.abort(), 10000);
     try {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST', signal: ctrl.signal,
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
-        body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 1200, response_format: { type: 'json_object' } })
+        body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 1200, reasoning_effort: 'low', response_format: { type: 'json_object' } })
       });
       clearTimeout(timer);
       if (!r.ok) { console.error('Groq failed, trying next:', m, r.status); continue; }
@@ -208,15 +208,18 @@ module.exports = async function handler(req, res) {
           }
         })
       };
+    const fastBody = JSON.parse(reqInit.body); fastBody.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    const reqFast = { ...reqInit, body: JSON.stringify(fastBody) };
     const started = Date.now();
     // one Gemini attempt: returns the text, or '' if busy / failed / too slow
-    async function gemini(model, k, ms) {
+    async function gemini(model, k, ms, plain) {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), ms);
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-          { ...reqInit, headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
+          { ...(plain ? reqInit : reqFast), headers: { ...reqInit.headers, 'x-goog-api-key': KEYS[k] }, signal: ctrl.signal });
         clearTimeout(timer);
+        if (r.status === 400 && !plain) { return gemini(model, k, ms, true); }
         if (!r.ok) { console.error('Gemini failed:', model, 'key', k + 1, r.status); return ''; }
         const data = await r.json();
         const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
@@ -230,14 +233,17 @@ module.exports = async function handler(req, res) {
     const wait = ms => new Promise(res2 => setTimeout(() => res2(''), ms));
 
     // ask Gemini and Groq at the same time; the first good answer wins
-    let raw = await firstGood([gemini(MODELS[0], 0, 9000), askGroq(contents, 0)]);
+    const race = [gemini(MODELS[0], 0, 14000), askGroq(contents, 0)];
+    if (KEYS.length > 1) race.push(gemini(MODELS[0], 1, 14000));
+    if (MODELS[1]) race.push(gemini(MODELS[1], KEYS.length > 1 ? 1 : 0, 14000));
+    let raw = await firstGood(race);
     // 2) Still nothing: try the other Gemini key and backup models quickly (max ~25s total)
     if (!raw) {
       outer:
       for (const m of MODELS) {
         for (let k = 0; k < KEYS.length; k++) {
-          if (m === MODELS[0] && k === 0) continue;
-          if (Date.now() - started > 22000) break outer;
+          if (m === MODELS[0] || (m === MODELS[1] && k === (KEYS.length > 1 ? 1 : 0))) continue;
+          if (Date.now() - started > 24000) break outer;
           raw = await gemini(m, k, 5000);
           if (raw) break outer;
         }
