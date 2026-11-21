@@ -790,7 +790,7 @@ i.nv::after{background:#C0392B}
       var t=text.toLowerCase();
       key=/(work|portfolio|project|case)/.test(t)?'work':/(status|current|who is|manikandan)/.test(t)?'status':/(best|designer|suggest|2030)/.test(t)?'search':(nextKey()||'other');
     }
-    if(done[key]&&secEl[key]){goTo(key);return;}
+    // typed questions always get a fresh answer at the bottom (no jumping back up to an old answer)
     busy=true;send.disabled=true;
     noteLocal(text,key);
     var u=startTurn(text);
@@ -1242,7 +1242,7 @@ i.nv::after{background:#C0392B}
       return;
     }
     if(/(best (ui\/?)?ux designer|best designer|2030|top pick)/.test(low)) return ask(t,'search');
-    if(/(status|who is|about manikandan)/.test(low)) return ask(t,'status');
+    if(/(current status|^\s*who is (manikandan|mani|he)\s*\??\s*$|about manikandan)/.test(low)) return ask(t,'status');
     if(/(resume|résumé|\bcv\b|curriculum vitae|biodata|bio-data)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); noteLocal(t,'resume'); var ra=el('div','a'); thread.appendChild(ra); R.resume(ra).then(function(){busy=false;send.disabled=false;}); return; }
     if(/\b(links?|url|urls)\b/.test(low) && !/(linkedin|phone|number|mobile|email|mail|contact|resume|\bcv\b|whatsapp|github)/.test(low)){ if(busy)return; busy=true;send.disabled=true; startTurn(t); noteLocal(t,'work'); var la=el('div','a'); thread.appendChild(la); R.work(la,'Here are his projects. Tap VIEW to open any project.').then(function(){busy=false;send.disabled=false;}); return; }
     if(/(his work|portfolio|case stud)/.test(low)) return ask(t,'work');
