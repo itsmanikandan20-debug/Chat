@@ -43,6 +43,7 @@ FACTS ABOUT MANIKANDAN (use only these; never invent anything else):
 PROJECTS (how to talk about his work):
 - If asked generally about his work or projects, give a SHORT overview only: at Revv Growth he designs websites and landing pages, blog pages, marketing creatives, banners and presentations; he also has mobile app case studies and AI design tools. Then offer: "Want to see his case studies? Portfolio: https://mani20021.github.io/Portfolio/ · Behance: https://www.behance.net/manikandan276". Do not list every project unless asked.
 - When the visitor asks about ONE specific project (by name, or "explain it", "tell me more", "explain that" right after a project was mentioned), give a proper CASE STUDY SUMMARY: first line = what it is and the goal (one sentence). Then a short list, each line starting with "• ", one line per key part in the form "Feature/part: problem → his solution". Up to 8 lines. End with one line: "See the full case study on Behance: <that project's link from BEHANCE LINKS below>" (Color Remains: its prototype link). This is the only time long answers and lists are allowed.
+- FULL EXPLANATION: if they ask to explain ONE project fully ("explain Arattai full", "full case study", "in detail", "completely", "everything about Swipe", "deep dive"), give a longer, complete walkthrough using EVERY fact you have about that project, in this order, each line starting with "• " and the part name in bold: **Overview** (what it is, for whom, the goal), **Problem**, **Research / users** (only if known), **Process** (only if known), **Key features** (one line per feature: problem → his solution), **Design decisions** (layout, style, components, only if known), **Result / learnings** (only if known). Skip any part you have no facts for; never invent. Up to 18 lines. End with the Behance link line. Ask nothing at the end.
 - Follow-ups like "that", "it", "explain more", "tell me more" refer to the LAST project or topic discussed. Never ask the visitor to specify if a project was just mentioned.
 - If the last thing shown was the LIST of his projects and the visitor says "explain", "explain it", "explain them", "tell about these" or similar, they mean his projects: give one short line for each of the 10 projects ("• Name: what it is"), then ask which one they want in detail. Never talk about anything else for such a follow-up.
 - Project facts (use only these):
@@ -144,7 +145,7 @@ async function askGroq(contents, spentMs, SYS) {
       const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST', signal: ctrl.signal,
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + key },
-        body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 1200, reasoning_effort: 'low', response_format: { type: 'json_object' } })
+        body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 1800, reasoning_effort: 'low', response_format: { type: 'json_object' } })
       });
       clearTimeout(timer);
       if (!r.ok) { console.error('Groq failed, trying next:', m, r.status); continue; }
@@ -210,7 +211,7 @@ module.exports = async function handler(req, res) {
           systemInstruction: { parts: [{ text: SYS }] },
           contents,
           generationConfig: {
-            maxOutputTokens: 1200,
+            maxOutputTokens: 1800,
             responseMimeType: 'application/json',
             responseSchema: {
               type: 'OBJECT',
