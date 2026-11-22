@@ -1252,6 +1252,8 @@ i.nv::after{background:#C0392B}
   function reset(){
     if(busy)return;
     thread.innerHTML='';done={};secEl={};unlocked=false;input.setAttribute('readonly','');
+    [].slice.call(scroll.querySelectorAll('.hello')).forEach(function(x){x.remove();}); // never stack greetings
+    aiHist.length=0;usedMemes=[];foodCtx=null;
     var h=el('div','hello');h.id='hello';
     h.innerHTML='<h1><svg class="burst" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#D97757"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg>Good to see you</h1>';
     scroll.insertBefore(h,thread);hello=h;
