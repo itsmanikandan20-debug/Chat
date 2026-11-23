@@ -543,13 +543,6 @@ i.nv::after{background:#C0392B}
         <div class="brand"><span class="tg" aria-hidden="true"></span>Assistant</div>
         <div class="btnpair" aria-hidden="true"><span><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg></span></div>
       </div>
-      <button class="nav" type="button" id="newchat"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New</button>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search</div>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><path d="M5 8h14v11H5zM7 5h10M6 8V6.5"/></svg>Projects</div>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="11" height="14" rx="2"/><path d="M9 8h8a2 2 0 012 2v10"/></svg>Artifacts</div>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Scheduled</div>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="9" r="1"/><circle cx="15.5" cy="13" r="1"/></svg>Design</div>
-      <div class="nav dead"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6h6v2"/></svg>Customize</div>
       <div class="lab">Recents ⌄</div>
       <div class="rec on" id="recTitle">New chat</div>
     </div>
@@ -1323,7 +1316,7 @@ i.nv::after{background:#C0392B}
   });
   setTimeout(function(){document.getElementById('wNew').focus();},50);
   document.getElementById('restart').addEventListener('click',reset);
-  document.getElementById('newchat').addEventListener('click',reset);
+  var nc=document.getElementById('newchat'); if(nc) nc.addEventListener('click',reset);
 })();
 </script>
 </body>
